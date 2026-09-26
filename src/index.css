@@ -1,0 +1,304 @@
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Space Grotesk", sans-serif;
+  --font-body: "Space Grotesk", sans-serif;
+  /* Serif-italic accent used sparingly for typographic contrast.
+     System stack on purpose -- no extra font file to download. */
+  --font-accent: ui-serif, Georgia, "Times New Roman", serif;
+
+  --color-ink: #050507;
+  --color-ink-soft: #0a0a0f;
+  --color-lime: #bfff00;
+  --color-lime-dim: #99cc00;
+  --color-lime-shadow: #5e7c00;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+::selection {
+  background-color: #bfff00;
+  color: #050507;
+}
+
+/* Hollow/outlined accent type -- pairs with an italic serif fallback
+   to echo a bold-sans + serif-italic contrast without a second font file. */
+.text-outline-accent {
+  font-family: var(--font-accent);
+  font-style: italic;
+  font-weight: 400;
+  color: transparent;
+  -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.75);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ---- Flip cards (services grid) ----------------------------------------
+   Plain CSS 3D transforms: no library, and the reduced-motion rule above
+   already neutralises the transition for anyone who opts out. */
+.flip-scene {
+  perspective: 1400px;
+}
+
+.flip-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 600ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.flip-scene:hover .flip-inner,
+.flip-scene:focus-within .flip-inner,
+.flip-scene[data-flipped='true'] .flip-inner {
+  transform: rotateY(180deg);
+}
+
+.flip-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.flip-face-back {
+  transform: rotateY(180deg);
+}
+
+/* Marquee for the client band. */
+@keyframes trust-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.trust-marquee {
+  animation: trust-scroll 38s linear infinite;
+}
+
+.trust-marquee:hover {
+  animation-play-state: paused;
+}
+
+/* ---- Contact hero illustration -----------------------------------------
+   Hand-written keyframes driving specific nodes inside the inline SVG.
+   The prefers-reduced-motion rule above already neutralises all of these. */
+
+/* Expanding ring that fades as it grows -- the broadcast halo. */
+@keyframes dd-halo {
+  0% {
+    r: 7;
+    opacity: 0.55;
+  }
+  70% {
+    opacity: 0;
+  }
+  100% {
+    r: 26;
+    opacity: 0;
+  }
+}
+
+.dd-halo {
+  animation: dd-halo 2.4s ease-out infinite;
+}
+
+.dd-halo-delay {
+  animation: dd-halo 2.4s ease-out 1.2s infinite;
+}
+
+/* The emitter itself, breathing in place. */
+@keyframes dd-node {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.18);
+  }
+}
+
+.dd-node {
+  animation: dd-node 2.4s ease-in-out infinite;
+  transform-origin: center;
+  transform-box: fill-box;
+}
+
+/* Gentle vertical drift for the whole panel. */
+@keyframes dd-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.dd-float {
+  animation: dd-float 6s ease-in-out infinite;
+  will-change: transform;
+}
+
+/* Bars growing out of the baseline, staggered per column. */
+@keyframes dd-bar {
+  from {
+    transform: scaleY(0.35);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+.dd-bar {
+  animation: dd-bar 2.8s ease-in-out infinite alternate;
+  transform-origin: bottom;
+  transform-box: fill-box;
+}
+
+/* Trend line drawing itself on a loop. */
+@keyframes dd-draw {
+  0% {
+    stroke-dashoffset: 340;
+  }
+  55%,
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+.dd-draw {
+  stroke-dasharray: 340;
+  animation: dd-draw 4s ease-in-out infinite;
+}
+
+/* Ping radiating off the Text us dot. */
+@keyframes dd-ping {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(191, 255, 0, 0.6);
+  }
+  50% {
+    box-shadow: 0 0 0 12px rgba(191, 255, 0, 0);
+  }
+}
+
+.dd-ping {
+  animation: dd-ping 2s ease-out infinite;
+}
+
+/* ---- Services hero illustration ----------------------------------------
+   Orbit rotation for the service constellation. transform-box: view-box
+   keeps the origin in SVG user units rather than the element bounding box. */
+@keyframes dd-orbit {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.dd-orbit,
+.dd-orbit-reverse {
+  transform-box: view-box;
+  transform-origin: 240px 240px;
+  will-change: transform;
+}
+
+.dd-orbit {
+  animation: dd-orbit 44s linear infinite;
+}
+
+.dd-orbit-reverse {
+  animation: dd-orbit 64s linear infinite reverse;
+}
+
+/* ---- Section heading wipe reveal ---------------------------------------
+   The text is revealed by an opening clip-path while a bar sweeps across in
+   front of it. Both run once, when .is-revealed is added on scroll-in. */
+@keyframes dd-wipe {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@keyframes dd-bar-sweep {
+  0% {
+    transform: translateX(-100%);
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(110%);
+    opacity: 0;
+  }
+}
+
+/* Hidden until revealed, so the wipe has something to open onto. */
+.dd-wipe-text {
+  clip-path: inset(0 100% 0 0);
+}
+
+.is-revealed .dd-wipe-text {
+  animation: dd-wipe 0.9s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.dd-wipe-bar {
+  opacity: 0;
+}
+
+.is-revealed .dd-wipe-bar {
+  animation: dd-bar-sweep 0.9s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* Reduced motion: the global rule collapses the duration, so make sure the
+   text still ends up visible rather than clipped away. */
+@media (prefers-reduced-motion: reduce) {
+  .dd-wipe-text {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+/* ---- Starfield + outlined heading (differentiators section) -------------- */
+@keyframes dd-twinkle {
+  0%,
+  100% {
+    opacity: 0.15;
+  }
+  50% {
+    opacity: 0.85;
+  }
+}
+
+.dd-star {
+  animation: dd-twinkle 3.2s ease-in-out infinite;
+}
+
+/* Hollow display type: solid line one, outlined line two. */
+.dd-outline-heading {
+  color: transparent;
+  -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.8);
+}
+
+@media (max-width: 640px) {
+  .dd-outline-heading {
+    -webkit-text-stroke-width: 1px;
+  }
+}

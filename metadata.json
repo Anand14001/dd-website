@@ -1,0 +1,6 @@
+{
+  "name": "Digital Dude",
+  "description": "Digital Dude - Empowering businesses to grow with the right blend of technology and marketing since 2022.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
