@@ -7,6 +7,7 @@ interface SectionHeadingProps {
   lineTwo: string;
   intro?: string;
   align?: 'left' | 'center';
+  className?: string;
 }
 
 /**
@@ -19,6 +20,7 @@ export const SectionHeading: React.FC<SectionHeadingProps> = ({
   lineTwo,
   intro,
   align = 'left',
+  className = '',
 }) => {
   const ref = useRef<HTMLDivElement>(null);
   const [revealed, setRevealed] = useState(false);
@@ -46,7 +48,7 @@ export const SectionHeading: React.FC<SectionHeadingProps> = ({
       ref={ref}
       className={`${revealed ? 'is-revealed' : ''} ${
         align === 'center' ? 'mx-auto max-w-3xl text-center' : 'max-w-3xl'
-      }`}
+      } ${className}`}
     >
       <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-lime">{eyebrow}</span>
 

@@ -10,9 +10,9 @@ import {
   UserCircle2,
   ArrowRight,
   ArrowUpRight,
-  SlidersHorizontal,
 } from 'lucide-react';
 import { SERVICES } from '../data/agencyData';
+import { SectionHeading } from './home/SectionHeading';
 
 const getIcon = (name: string) => {
   switch (name) {
@@ -61,27 +61,13 @@ export const WhatWeDoSection: React.FC = () => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Header */}
-        <div
-          className="max-w-3xl mx-auto text-center space-y-5 mb-16 transition-all duration-700 ease-out"
-          style={{
-            opacity: visible ? 1 : 0,
-            transform: visible ? 'translateY(0)' : 'translateY(24px)',
-          }}
-        >
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-lime/10 border border-lime/20 text-xs font-semibold text-lime">
-            <SlidersHorizontal className="w-3.5 h-3.5" />
-            <span>What We Do</span>
-          </div>
-
-          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white tracking-[-0.02em] leading-[1.05]">
-            Engineered For <span className="text-outline-accent">Visibility, Traffic &amp; Sales</span>
-          </h2>
-
-          <p className="text-white/60 text-base sm:text-lg leading-[1.7]">
-            Every business has unique growth bottlenecks. We craft custom-engineered solutions combining
-            modern development, algorithmic marketing, and sales automation.
-          </p>
-        </div>
+        <SectionHeading
+          eyebrow="About us"
+          lineOne="ENGINEERED FOR"
+          lineTwo="VISIBILITY, TRAFFIC & SALES."
+          intro="Every business has unique growth bottlenecks. We craft custom-engineered solutions combining modern development, algorithmic marketing, and sales automation."
+          className="mb-16"
+        />
 
         {/* Flip Card Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
