@@ -76,8 +76,8 @@ export const StatsBand: React.FC = () => {
 
   return (
     <section ref={sectionRef} className="bg-lime py-16 lg:py-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 sm:gap-10">
+      <div className="w-full max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 sm:gap-10 2xl:gap-16">
           {AGENCY_INFO.stats.map((stat) => (
             <AnimatedStat key={stat.label} value={stat.value} label={stat.label} active={active} />
           ))}

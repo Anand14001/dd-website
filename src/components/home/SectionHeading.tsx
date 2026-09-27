@@ -47,12 +47,12 @@ export const SectionHeading: React.FC<SectionHeadingProps> = ({
     <div
       ref={ref}
       className={`${revealed ? 'is-revealed' : ''} ${
-        align === 'center' ? 'mx-auto max-w-3xl text-center' : 'max-w-3xl'
+        align === 'center' ? 'mx-auto max-w-3xl 2xl:max-w-4xl text-center' : 'max-w-3xl 2xl:max-w-4xl'
       } ${className}`}
     >
       <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-lime">{eyebrow}</span>
 
-      <h2 className="relative mt-5 overflow-hidden text-4xl font-bold leading-[1.02] tracking-[-0.03em] text-white sm:text-5xl lg:text-6xl">
+      <h2 className="relative mt-5 overflow-hidden text-4xl font-bold leading-[1.02] tracking-[-0.03em] text-white sm:text-5xl lg:text-6xl 2xl:text-7xl">
         <span className="dd-wipe-text block">
           {lineOne}
           <br />
@@ -68,8 +68,8 @@ export const SectionHeading: React.FC<SectionHeadingProps> = ({
 
       {intro && (
         <p
-          className={`mt-6 text-base leading-[1.75] text-white/60 sm:text-lg ${
-            align === 'center' ? 'mx-auto max-w-2xl' : 'max-w-2xl'
+          className={`mt-6 text-base leading-[1.75] text-white/60 sm:text-lg 2xl:text-xl ${
+            align === 'center' ? 'mx-auto max-w-2xl 2xl:max-w-3xl' : 'max-w-2xl 2xl:max-w-3xl'
           }`}
         >
           {intro}

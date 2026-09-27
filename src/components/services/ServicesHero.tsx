@@ -31,7 +31,7 @@ export const ServicesHero: React.FC = () => {
         SERVICES
       </span>
 
-      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="relative mx-auto w-full max-w-[1720px] px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16">
         <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2 lg:gap-8">
           {/* Copy */}
           <motion.div

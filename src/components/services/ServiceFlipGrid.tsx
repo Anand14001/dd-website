@@ -32,7 +32,7 @@ interface ServiceFlipGridProps {
 export const ServiceFlipGrid: React.FC<ServiceFlipGridProps> = ({ onOpenModal }) => {
   return (
     <section id="all-services" className="bg-ink-soft py-24 lg:py-32">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto w-full max-w-[1720px] px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16">
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}

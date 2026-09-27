@@ -13,7 +13,7 @@ interface ServiceSpotlightsProps {
 export const ServiceSpotlights: React.FC<ServiceSpotlightsProps> = ({ onOpenModal }) => {
   return (
     <section className="bg-ink py-24 lg:py-32">
-      <div className="mx-auto max-w-7xl space-y-24 px-4 sm:px-6 lg:space-y-32 lg:px-8">
+      <div className="mx-auto w-full max-w-[1720px] space-y-24 px-4 sm:px-6 lg:space-y-32 lg:px-8 xl:px-12 2xl:px-16">
         {SERVICE_SPOTLIGHTS.map((spot, i) => {
           const service = SERVICES.find((s) => s.id === spot.serviceId);
           const flipped = i % 2 === 1;

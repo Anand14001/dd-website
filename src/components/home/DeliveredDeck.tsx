@@ -27,7 +27,7 @@ const DECK_SPEC: Array<{
     category: 'Website & App Development',
     metric: 'Sites shipped',
     caption: 'Live client builds',
-    left: '2%',
+    left: '1.5rem',
     top: '6%',
     rotate: -7,
   },
@@ -35,7 +35,7 @@ const DECK_SPEC: Array<{
     category: 'Package Design',
     metric: 'Packs designed',
     caption: 'Retail-ready artwork',
-    left: '27%',
+    left: 'calc(50% - 9rem)',
     top: '0%',
     rotate: 4,
   },
@@ -43,7 +43,7 @@ const DECK_SPEC: Array<{
     category: 'Logo',
     metric: 'Identities built',
     caption: 'Marks and brand systems',
-    left: '52%',
+    left: 'calc(100% - 17.5rem)',
     top: '8%',
     rotate: -3,
   },
@@ -51,7 +51,7 @@ const DECK_SPEC: Array<{
     category: 'Social Media Posters',
     metric: 'Campaign creatives',
     caption: 'Built for the feed',
-    left: '8%',
+    left: '3.5rem',
     top: '48%',
     rotate: 6,
   },
@@ -59,7 +59,7 @@ const DECK_SPEC: Array<{
     category: 'Corporate Needs',
     metric: 'Corporate collateral',
     caption: 'Decks, profiles, print',
-    left: '34%',
+    left: 'calc(50% - 3rem)',
     top: '54%',
     rotate: -5,
   },
@@ -67,7 +67,7 @@ const DECK_SPEC: Array<{
     category: 'Business Cards',
     metric: 'Card systems',
     caption: 'Print-ready sets',
-    left: '58%',
+    left: 'calc(100% - 18.5rem)',
     top: '46%',
     rotate: 8,
   },
@@ -109,7 +109,7 @@ export const DeliveredDeck: React.FC = () => {
         }}
       />
 
-      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="relative mx-auto w-full max-w-[1720px] px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16">
         <SectionHeading
           eyebrow="Our output"
           lineOne="WHAT WE'VE"
@@ -120,7 +120,7 @@ export const DeliveredDeck: React.FC = () => {
         {/* Scattered, draggable deck (md and up) */}
         <div
           ref={stageRef}
-          className="relative mt-16 hidden h-[26rem] md:block"
+          className="relative mt-16 hidden h-[28rem] lg:h-[30rem] md:block"
         >
           {cards.map((card, i) => {
             const v = VARIANTS[i % VARIANTS.length];

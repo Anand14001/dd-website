@@ -13,7 +13,7 @@ export const ContactPage: React.FC = () => {
       <ContactHero />
 
       <section className="bg-ink pb-24 lg:pb-32">
-        <div className="mx-auto grid max-w-7xl grid-cols-1 items-start gap-8 px-4 sm:px-6 lg:grid-cols-12 lg:px-8">
+        <div className="mx-auto grid w-full max-w-[1720px] grid-cols-1 items-start gap-8 px-4 sm:px-6 lg:grid-cols-12 lg:px-8 xl:px-12 2xl:px-16">
           <div className="lg:col-span-7">
             <ContactForm initialService={initialService} />
           </div>

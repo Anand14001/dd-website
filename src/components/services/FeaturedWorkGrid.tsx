@@ -11,7 +11,7 @@ export const FeaturedWorkGrid: React.FC = () => {
 
   return (
     <section className="bg-ink pb-24 lg:pb-32">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto w-full max-w-[1720px] px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16">
         <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
           {FEATURED_WORK.map((item, i) => (
             <motion.article

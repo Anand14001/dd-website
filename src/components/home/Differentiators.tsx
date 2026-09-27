@@ -58,7 +58,7 @@ export const Differentiators: React.FC = () => {
         ))}
       </div>
 
-      <div className="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+      <div className="relative mx-auto w-full max-w-[1600px] px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16">
         {/* Heading */}
         <div ref={headingRef} className={`text-center ${revealed ? 'is-revealed' : ''}`}>
           <span className="text-[11px] font-bold uppercase tracking-[0.25em] text-lime">
@@ -111,7 +111,7 @@ export const Differentiators: React.FC = () => {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true, margin: '-90px' }}
                     transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-                    className={`ml-12 rounded-2xl border p-6 backdrop-blur-sm md:row-start-1 md:ml-0 md:max-w-md ${
+                    className={`ml-12 rounded-2xl border p-6 backdrop-blur-sm md:row-start-1 md:ml-0 md:max-w-md lg:max-w-lg xl:max-w-xl ${
                       isLeft ? 'md:col-start-1 md:mr-12 md:justify-self-end' : 'md:col-start-3 md:ml-12'
                     }`}
                     style={{

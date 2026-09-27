@@ -28,15 +28,15 @@ export const Hero: React.FC<HeroProps> = ({ onOpenConsultation, onExploreSolutio
         }}
       />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
+      <div className="w-full max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 relative z-10">
         {/* Centered, full-bleed headline block */}
-        <div className="max-w-4xl mx-auto text-center space-y-6">
-          <h1 className="text-[2.25rem] sm:text-5xl lg:text-6xl xl:text-[4.25rem] font-bold text-white tracking-[-0.02em] leading-[1.05]">
+        <div className="max-w-4xl 2xl:max-w-5xl mx-auto text-center space-y-6">
+          <h1 className="text-[2.25rem] sm:text-5xl lg:text-6xl xl:text-[4.25rem] 2xl:text-[4.75rem] font-bold text-white tracking-[-0.02em] leading-[1.05]">
             Grow Your Business With The{' '}
             <span className="text-outline-accent">Right Blend Of Technology &amp; Marketing</span>
           </h1>
 
-          <div className="space-y-3 max-w-2xl mx-auto">
+          <div className="space-y-3 max-w-2xl 2xl:max-w-3xl mx-auto">
             <p className="text-base sm:text-lg text-white/70 font-normal leading-[1.6]">
               At <strong className="text-white font-semibold">Digital Dude</strong>, we empower
               businesses to grow with the right blend of technology and marketing. We craft tailored

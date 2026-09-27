@@ -16,7 +16,7 @@ export const AboutStats: React.FC = () => {
         }}
       />
 
-      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="relative mx-auto w-full max-w-[1720px] px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16">
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
           {/* Four headline figures */}
           <motion.dl

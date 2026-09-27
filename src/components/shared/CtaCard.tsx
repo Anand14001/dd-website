@@ -21,7 +21,7 @@ export const CtaCard: React.FC<CtaCardProps> = ({
 }) => {
   return (
     <section className="bg-ink pt-20 pb-24 lg:pt-24 lg:pb-32">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto w-full max-w-[1720px] px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16">
         <motion.div
           initial={{ opacity: 0, y: 28 }}
           whileInView={{ opacity: 1, y: 0 }}

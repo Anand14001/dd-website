@@ -59,7 +59,7 @@ export const WhatWeDoSection: React.FC = () => {
     <section ref={sectionRef} className="py-24 lg:py-32 bg-ink relative overflow-hidden">
       <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[700px] h-[500px] bg-lime/[0.05] blur-[160px] rounded-full pointer-events-none" />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div className="w-full max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 relative z-10">
         {/* Header */}
         <SectionHeading
           eyebrow="About us"
@@ -70,7 +70,7 @@ export const WhatWeDoSection: React.FC = () => {
         />
 
         {/* Flip Card Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 2xl:gap-10">
           {SERVICES.map((service, idx) => {
             const Icon = getIcon(service.iconName);
             return (

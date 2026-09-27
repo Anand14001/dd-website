@@ -23,7 +23,7 @@ export const PortfolioGrid: React.FC = () => {
 
   return (
     <section id="portfolio" className="bg-ink py-20 lg:py-24">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto w-full max-w-[1720px] px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16">
         {/* Filters */}
         <div className="mb-10 flex flex-wrap items-center justify-center gap-2">
           {CATEGORIES.map((cat) => (

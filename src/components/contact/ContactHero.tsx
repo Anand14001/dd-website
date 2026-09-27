@@ -34,7 +34,7 @@ export const ContactHero: React.FC = () => {
         CONTACT
       </span>
 
-      <div className="relative mx-auto grid max-w-7xl grid-cols-1 items-center gap-12 px-4 sm:px-6 lg:grid-cols-2 lg:gap-8 lg:px-8">
+      <div className="relative mx-auto grid w-full max-w-[1720px] grid-cols-1 items-center gap-12 px-4 sm:px-6 lg:grid-cols-2 lg:gap-8 lg:px-8 xl:px-12 2xl:px-16">
         {/* Copy */}
         <motion.div
           initial={{ opacity: 0, y: 40 }}

@@ -44,7 +44,7 @@ export const WorkCarousel: React.FC = () => {
 
   return (
     <section className="bg-ink py-24 lg:py-32">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto w-full max-w-[1720px] px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16">
         <div className="flex flex-wrap items-end justify-between gap-6">
           <SectionHeading
             eyebrow="Portfolio"
@@ -77,7 +77,7 @@ export const WorkCarousel: React.FC = () => {
       {/* Full-bleed rail so cards run off the right edge. */}
       <div
         ref={trackRef}
-        className="mt-12 flex snap-x snap-mandatory gap-5 overflow-x-auto scroll-smooth px-4 pb-4 [scrollbar-width:none] sm:px-6 lg:px-8 [&::-webkit-scrollbar]:hidden"
+        className="mt-12 flex snap-x snap-mandatory gap-5 overflow-x-auto scroll-smooth px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
         {ITEMS.map((item) => {
           const inner = (

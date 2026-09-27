@@ -6,13 +6,13 @@ import { CLIENT_STORIES, SATISFACTION_STAT } from '../../data/portfolioPageData'
 export const ClientStories: React.FC = () => {
   return (
     <section className="bg-ink py-24 lg:py-32">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto w-full max-w-[1720px] px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-100px' }}
           transition={{ duration: 0.6 }}
-          className="max-w-3xl"
+          className="max-w-3xl 2xl:max-w-4xl"
         >
           <div className="inline-flex items-center gap-2 rounded-full border border-lime/20 bg-lime/10 px-3 py-1 text-xs font-semibold text-lime">
             <Star className="h-3.5 w-3.5" />
