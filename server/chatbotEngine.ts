@@ -35,6 +35,11 @@ function getGeminiClient(): GoogleGenAI | null {
   }
   return new GoogleGenAI({
     apiKey,
+    httpOptions: {
+      headers: {
+        'User-Agent': 'aistudio-build',
+      },
+    },
   });
 }
 
@@ -320,15 +325,32 @@ export async function answerCustomerQuery(
     ];
 
     let replyText = '';
-    const customModel = process.env.GEMINI_MODEL?.trim();
+    const envModel = process.env.GEMINI_MODEL?.trim();
+    // Proactively filter out deprecated models (e.g. gemini-2.0-flash, gemini-1.5-*, etc.)
+    const isDeprecated =
+      envModel &&
+      (envModel.includes('2.0') ||
+        envModel.includes('1.5') ||
+        envModel === 'gemini-pro' ||
+        envModel.startsWith('models/gemini-2.0') ||
+        envModel.startsWith('models/gemini-1.5'));
+
+    // Primary model is gemini-3.8-flash unless user configured a valid non-deprecated custom model
+    const primaryModel = !envModel || isDeprecated ? 'gemini-3.8-flash' : envModel;
+
+    // Use active Gemini models in priority order per @google/genai guidelines
     const modelsToTry = [
-      ...(customModel ? [customModel] : []),
-      'gemini-1.5-flash',
-      'gemini-2.0-flash',
-      'gemini-2.5-flash',
+      primaryModel,
       'gemini-3.8-flash',
-      'gemini-1.5-pro',
-    ];
+      'gemini-flash-latest',
+      'gemini-3.1-flash-lite',
+    ].filter(
+      (model, idx, arr) =>
+        arr.indexOf(model) === idx &&
+        !model.includes('2.0') &&
+        !model.includes('1.5') &&
+        model !== 'gemini-pro'
+    );
 
     for (const model of modelsToTry) {
       try {
