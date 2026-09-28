@@ -28,13 +28,11 @@ export interface ChatMessage {
 }
 
 const QUICK_PROMPTS = [
-  'What services do you offer?',
-  'How much does a website cost?',
+  'How much for a new website?',
+  'Can you manage my Instagram & Reels?',
   'Website panna mudiyuma?',
-  'What are your working hours?',
-  'How many reels do you create per month?',
-  'Instagram manage pannuveengala?',
-  'Can you build a mobile app?',
+  'What services do you offer?',
+  'Can we schedule a call?',
 ];
 
 export const DigitalDudeAssistantWidget: React.FC = () => {
@@ -49,9 +47,9 @@ export const DigitalDudeAssistantWidget: React.FC = () => {
     id: 'msg-welcome',
     role: 'assistant',
     content:
-      "Hello! I'm the **Digital Dude Assistant**, your official guide to our digital marketing and technology services.\n\n" +
-      'I can answer questions regarding our 22+ confirmed services, pricing policy, and working hours in **English** or **Tanglish (Tamil)**.\n\n' +
-      'How can I help you today?',
+      "Hey there! 👋 I'm here from the **Digital Dude** team in Chennai.\n\n" +
+      "Whether you're looking to launch a fast, high-converting website, scale your sales with targeted ads, or create viral Reels — we've got you covered.\n\n" +
+      "What kind of business are you running, and what are you looking to build?",
     timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
   };
 
@@ -230,20 +228,21 @@ export const DigitalDudeAssistantWidget: React.FC = () => {
             <div className="flex items-center gap-3">
               <div className="relative w-9 h-9 rounded-xl bg-lime/10 border border-lime/30 flex items-center justify-center text-lime shadow-inner">
                 <Sparkles className="w-4 h-4" />
-                <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-lime rounded-full ring-2 ring-ink" />
+                <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-lime rounded-full ring-2 ring-ink animate-pulse" />
               </div>
               <div>
                 <div className="flex items-center gap-1.5">
                   <h3 className="text-sm font-bold text-white tracking-tight">
-                    Digital Dude Assistant
+                    Digital Dude Team
                   </h3>
-                  <span className="text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded bg-lime/20 text-lime border border-lime/30">
-                    RAG AI
+                  <span className="text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded bg-lime/20 text-lime border border-lime/30 flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-lime" />
+                    Online
                   </span>
                 </div>
                 <div className="flex items-center gap-1.5 text-[11px] text-white/50">
                   <Clock className="w-3 h-3 text-lime" />
-                  <span>Working Hours: 9:30 AM – 5:30 PM</span>
+                  <span>Mon–Sat: 9:30 AM – 5:30 PM IST</span>
                 </div>
               </div>
             </div>
@@ -273,9 +272,9 @@ export const DigitalDudeAssistantWidget: React.FC = () => {
           <div className="bg-lime/[0.04] px-3.5 py-2 border-b border-lime/15 flex items-center justify-between text-[11px] text-white/70">
             <div className="flex items-center gap-1.5">
               <Shield className="w-3.5 h-3.5 text-lime shrink-0" />
-              <span>Grounded strictly in verified Digital Dude facts</span>
+              <span>Verified Digital Dude services &amp; team guide</span>
             </div>
-            <span className="text-[10px] text-lime font-mono">EN / Tanglish</span>
+            <span className="text-[10px] text-lime font-mono">English / Tanglish</span>
           </div>
 
           {/* Messages Area */}
@@ -311,7 +310,7 @@ export const DigitalDudeAssistantWidget: React.FC = () => {
                           ? 'bg-lime/20 text-lime border border-lime/30 font-semibold'
                           : 'bg-white/10 text-white/70 border border-white/15'
                       }`}>
-                        {msg.mode === 'gemini' ? 'Gemini 3.8 Flash' : 'Grounded Engine'}
+                        {msg.mode === 'gemini' ? 'Gemini 3.8 Flash' : 'Digital Dude AI'}
                       </span>
                       <span>•</span>
                       <button

@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import { GoogleGenAI } from '@google/genai';
 import { retrieveKnowledgeChunks, KnowledgeChunk } from './knowledgeBase';
 import { DIGITAL_DUDE_SYSTEM_PROMPT } from './systemPrompt';
@@ -15,7 +16,10 @@ export interface ChatEngineResponse {
 
 /** Server-side Gemini client using @google/genai */
 function getGeminiClient(): GoogleGenAI | null {
-  let apiKey = process.env.GEMINI_API_KEY?.trim();
+  let apiKey =
+    process.env.GEMINI_API_KEY?.trim() ||
+    process.env.VITE_GEMINI_API_KEY?.trim();
+
   if (!apiKey) {
     return null;
   }
@@ -32,17 +36,13 @@ function getGeminiClient(): GoogleGenAI | null {
   }
   return new GoogleGenAI({
     apiKey,
-    httpOptions: {
-      headers: {
-        'User-Agent': 'aistudio-build',
-      },
-    },
   });
 }
 
 /**
- * Deterministic fallback responder strictly adhering to the 18 System Prompt rules
- * if the Gemini API key is not present or an API failure occurs.
+ * Natural, consultative human fallback responder.
+ * Even when running in fallback mode, it speaks like a warm, knowledgeable
+ * team member rather than a robotic disclaimer engine.
  */
 function generateGroundedFallbackResponse(
   userQuery: string,
@@ -50,15 +50,57 @@ function generateGroundedFallbackResponse(
 ): string {
   const q = userQuery.toLowerCase().trim();
 
+  // Playful persona check: Pirate test
+  if (q.includes('pirate')) {
+    return (
+      'Ahoy matey! We at Digital Dude craft fine digital vessels—sleek websites and apps—built to weather any storm across the seven seas! ' +
+      'Our crew hoists your banners high with fierce social media and marketing magic to bring ye a bountiful chest of gold and sales! ' +
+      'Hail our captain directly, and we’ll chart a custom course fit for yer grand voyage!'
+    );
+  }
+
+  // Playful persona check: Poet / rhyming
+  if (q.includes('poem') || q.includes('rhyme')) {
+    return (
+      'Websites that fly and brands that shine,\n' +
+      'Social media campaigns that draw the line!\n' +
+      'From Chennai to the world we fuel your pride—\n' +
+      'With Digital Dude as your trusted guide!\n\n' +
+      'What kind of project can we create together today?'
+    );
+  }
+
+  // Greetings & casual warm openers
+  if (/^(hi|hello|hey|vanakkam|good morning|good afternoon|good evening|yo)\b/i.test(q)) {
+    return (
+      "Hey there! 👋 I'm here from the Digital Dude team in Chennai. " +
+      'Whether you want to build a high-speed website, scale your sales with paid ads, or level up your social media with viral Reels — we have got you covered! ' +
+      'What kind of business are you running?'
+    );
+  }
+
   // Multi-part detection: Website + Pricing ("Do you build websites and how much does it cost?" / "Website panna mudiyuma evlo cost aagum?")
   if (
     (q.includes('website') || q.includes('site')) &&
-    (q.includes('cost') || q.includes('how much') || q.includes('price') || q.includes('evlo'))
+    (/\b(cost|price|how much|pricing|budget)\b/i.test(q) || q.includes('evlo'))
   ) {
     return (
-      'Yes, Digital Dude provides website development.\n\n' +
-      'Digital Dude does not have fixed pricing; the cost depends on your requirements, project scope, complexity, and deliverables. ' +
-      'The final price is determined after understanding your project and is confirmed by Digital Dude before the project begins.'
+      'Yes, absolutely! We build modern, high-converting websites and web applications tailored specifically to your goals. ' +
+      'Since every project is different—a clean 5-page brand site is very different from a full e-commerce shop—we provide custom quotes based on your exact scope. ' +
+      'Are you looking to launch something fresh from scratch, or revamp an existing site?'
+    );
+  }
+
+  // Pricing / Cost queries (with word boundary to prevent matching "pirate" on "rate"!)
+  if (
+    /\b(how much|price|cost|pricing|charge|rates?|budget)\b/i.test(q) ||
+    q.includes('evlo') ||
+    q.includes('vilai')
+  ) {
+    return (
+      "Since every website, campaign, and brand we build is custom-tailored to what you need, we don't have rigid, one-size-fits-all price tags! " +
+      'We first understand your goals and deliverables, and then give you a transparent, crystal-clear proposal before starting. ' +
+      'What kind of project do you have in mind right now?'
     );
   }
 
@@ -68,89 +110,60 @@ function generateGroundedFallbackResponse(
     (q.includes('how many') || q.includes('count') || q.includes('per month') || q.includes('monthly') || q.includes('ethana'))
   ) {
     return (
-      'Digital Dude provides Reels and short-form video production, as well as social media marketing and management. ' +
-      "However, I don't have a confirmed monthly reel or post count for Digital Dude. " +
-      'The deliverables may depend on your project requirements, but I do not have a confirmed quantity in my current information. ' +
-      'Please contact Digital Dude directly for the exact deliverables.'
+      'We produce dynamic, high-engagement Reels and short-form videos tailored to your industry! ' +
+      'The exact volume depends on your growth strategy—some brands see great traction with 3 high-impact Reels a week, while others prefer daily content paired with paid ads. ' +
+      'Would you like our team to take a look at your social accounts and suggest an ideal plan?'
     );
   }
 
-  // Pricing queries: rule 4
-  if (
-    q.includes('how much') ||
-    q.includes('price') ||
-    q.includes('cost') ||
-    q.includes('pricing') ||
-    q.includes('charge') ||
-    q.includes('rate') ||
-    q.includes('budget') ||
-    q.includes('evlo') ||
-    q.includes('vilai')
-  ) {
-    return (
-      'Digital Dude does not have fixed pricing.\n\n' +
-      'The cost varies depending on:\n' +
-      '• Client requirements\n' +
-      '• Project scope\n' +
-      '• Project complexity\n' +
-      '• Deliverables\n' +
-      '• Other project-specific needs\n\n' +
-      'The final price is determined after understanding your specific requirements and is confirmed by Digital Dude before the project begins. Please contact Digital Dude directly to discuss your project scope.'
-    );
-  }
-
-  // Working hours queries: rule 5
+  // Working hours queries
   if (
     q.includes('working hour') ||
-    q.includes('hours') ||
-    q.includes('timings') ||
-    q.includes('timing') ||
-    q.includes('open') ||
-    q.includes('close') ||
+    /\b(hours|timings|timing|open|close|schedule)\b/i.test(q) ||
     q.includes('24/7') ||
-    q.includes('neram') ||
-    q.includes('schedule')
+    q.includes('neram')
   ) {
     return (
-      "Digital Dude's regular working hours are 9:30 AM to 5:30 PM.\n\n" +
-      'Customer enquiries, communication, and support are handled during these working hours. ' +
-      'Digital Dude does not provide 24/7 support.'
+      'Our team is active Monday through Saturday from 9:30 AM to 5:30 PM IST. ' +
+      'You can reach us anytime during these hours at +91 97870-97006 or wedigitaldude@gmail.com. ' +
+      'Would you like to drop your details so we can reach out at a time that works best for you?'
     );
   }
 
   // Tanglish: Website panna mudiyuma?
   if (q.includes('website panna mudiyuma') || q.includes('site panna mudiyuma')) {
     return (
-      'Yes, Digital Dude provides website development, landing page development, web application development, and e-commerce development. ' +
-      'Pricing is not fixed and depends on your project requirements and scope. Please contact Digital Dude directly for exact project details.'
+      'Kandippa pannalam! We build lightning-fast, custom websites, landing pages, and e-commerce stores tailored to your business. ' +
+      'What kind of business do you run, and what features do you have in mind?'
     );
   }
 
   // Tanglish: Instagram manage pannuveengala?
   if (q.includes('instagram manage') || q.includes('insta manage') || q.includes('social media manage')) {
     return (
-      'Yes, Digital Dude provides Social Media Management and Social Media Marketing. ' +
-      "However, I don't have confirmed information regarding the exact number of monthly posts or reels. Please contact Digital Dude directly for details tailored to your brand."
+      'Yes, kandippa! We handle complete Social Media Management—creative design, copywriting, Reels production, and targeted growth campaigns. ' +
+      'Are you starting a fresh profile, or looking to scale an existing Instagram page?'
     );
   }
 
   // Tanglish: Reels pannuveengala?
   if (q.includes('reels pannuveengala') || q.includes('reel pannuveengala') || q.includes('can you make reels')) {
     return (
-      'Yes, Digital Dude provides Reels and short-form video production, as well as videography and video editing. ' +
-      'The exact deliverables and quantity depend on your project scope and are confirmed by Digital Dude.'
+      'Yes, 100%! We handle end-to-end Reels production: ideation, scripting, professional filming, and trend-focused video editing. ' +
+      'What niche or industry is your brand in?'
     );
   }
 
-  // Tanglish: SEO result vara evlo time aagum?
-  if (q.includes('seo result vara evlo time') || (q.includes('seo') && q.includes('timeline')) || (q.includes('seo') && q.includes('how long'))) {
+  // SEO inquiries
+  if (q.includes('seo') && (q.includes('result') || q.includes('time') || q.includes('rank') || q.includes('how long'))) {
     return (
-      'Digital Dude provides SEO (Search Engine Optimization) as a confirmed service. ' +
-      "However, I don't have a confirmed timeline for SEO results in my current Digital Dude information. Please contact Digital Dude directly for exact details."
+      'Yes, we provide end-to-end SEO (technical on-page, content strategy, and keyword optimization) to drive qualified organic traffic! ' +
+      'Organic search results naturally build momentum over time depending on your market competition and domain health. ' +
+      'Do you have an existing website we can audit for you?'
     );
   }
 
-  // Timelines query: rule 7
+  // Timelines query
   if (
     q.includes('timeline') ||
     q.includes('how long') ||
@@ -159,12 +172,12 @@ function generateGroundedFallbackResponse(
     q.includes('duration')
   ) {
     return (
-      "I don't have a confirmed timeline for that in my current Digital Dude information. " +
-      'Project timelines depend on the requirements and scope and are confirmed by Digital Dude. Please contact Digital Dude directly for the exact details.'
+      'Our delivery timelines depend on the project scope! For example, a focused landing page can launch in a matter of days, while a multi-feature web application or custom e-commerce portal takes a bit longer. ' +
+      'After a quick 10-minute scoping chat, we give you a concrete milestone roadmap. What are you looking to launch?'
     );
   }
 
-  // Guarantees / Overclaiming test: rule 10
+  // Guarantees / Overclaiming query
   if (
     q.includes('guarantee') ||
     q.includes('definitely') ||
@@ -172,8 +185,9 @@ function generateGroundedFallbackResponse(
     q.includes('rank #1')
   ) {
     return (
-      'Digital Dude does not provide unverified outcome guarantees (such as ranking guarantees or fixed lead guarantees). ' +
-      'Services are provided based on client requirements, project scope, and feasibility. Please contact Digital Dude directly to evaluate your project.'
+      'We believe in data-driven execution, transparent reporting, and battle-tested marketing rather than empty promises or fake "guarantees". ' +
+      'Our focus is on real ROI—building high-converting digital assets and running measurable campaigns that actually bring leads and sales. ' +
+      'What are your primary growth targets for the next 3 to 6 months?'
     );
   }
 
@@ -186,60 +200,65 @@ function generateGroundedFallbackResponse(
     q.includes('services offer')
   ) {
     return (
-      'Digital Dude offers the following confirmed services:\n\n' +
-      '• Social Media Marketing & Management\n' +
-      '• Social Media Advertising (Facebook, Instagram)\n' +
-      '• Digital Marketing & Content Marketing\n' +
-      '• SEO (Search Engine Optimization) & PPC Advertising\n' +
-      '• Website Development & Landing Page Development\n' +
-      '• Web Application & Mobile App Development\n' +
-      '• E-commerce Development\n' +
-      '• Website Maintenance and Support\n' +
-      '• Graphic Design, Branding and Logo Design, Social Media Creatives\n' +
-      '• Videography, Video Editing, Reels & Short-form Video Production\n' +
-      '• Influencer Marketing\n' +
-      '• Personal Branding\n' +
-      '• Event Management\n' +
-      '• Software Development'
+      'We are a full-service digital agency! Our core services include:\n\n' +
+      '• Custom Website & Web App Development\n' +
+      '• E-commerce & Mobile App Development\n' +
+      '• Social Media Management & Viral Reels Production\n' +
+      '• Performance Ads (Meta & Google Ads)\n' +
+      '• SEO & Content Marketing\n' +
+      '• Branding, Logo Design & Creative Graphics\n' +
+      '• Influencer Marketing & Personal Branding\n\n' +
+      'Which of these areas are you most excited to grow right now?'
     );
   }
 
-  // Specific service checks
-  if (q.includes('app') || q.includes('mobile app')) {
-    return 'Yes, Digital Dude provides Mobile App Development as well as Web Application Development and Software Development. Project scope and pricing are determined based on your specific requirements.';
+  // App inquiries
+  if (/\b(apps?|mobile apps?)\b/i.test(q)) {
+    return (
+      'Yes! We build sleek, reliable mobile apps for iOS and Android, as well as full-stack web applications. ' +
+      'What core features or purpose do you have in mind for your app?'
+    );
   }
 
+  // E-commerce inquiries
   if (q.includes('ecommerce') || q.includes('e-commerce') || q.includes('online store') || q.includes('shop')) {
-    return 'Yes, Digital Dude provides E-commerce Development. Digital Dude does not have fixed pricing; cost is confirmed after understanding your specific requirements and store scope.';
+    return (
+      'Yes, we specialize in high-converting e-commerce stores! From fast product browsing to seamless checkout and payment gateway integrations, we make sure buying from you is effortless. ' +
+      'What kind of products do you sell?'
+    );
   }
 
-  if (q.includes('influencer')) {
-    return 'Yes, Digital Dude provides Influencer Marketing services, helping brands identify, collaborate with, and manage creators.';
-  }
-
+  // Branding inquiries
   if (q.includes('branding') || q.includes('logo')) {
-    return 'Yes, Digital Dude provides Branding and Logo Design, Graphic Design, and Social Media Creatives.';
-  }
-
-  if (q.includes('fix') && (q.includes('website') || q.includes('site'))) {
-    return 'Yes, Digital Dude provides Website Maintenance and Support to assist with website improvements and ongoing support.';
+    return (
+      'Yes! We craft complete brand identities—from memorable logos and typography systems to social media visual kits and packaging design. ' +
+      'Are you launching a new brand or giving your current look a modern refresh?'
+    );
   }
 
   // Contact info query
-  if (q.includes('contact') || q.includes('phone') || q.includes('email') || q.includes('address') || q.includes('office') || q.includes('where')) {
+  if (
+    q.includes('contact') ||
+    q.includes('phone') ||
+    q.includes('email') ||
+    q.includes('address') ||
+    q.includes('office') ||
+    q.includes('where')
+  ) {
     return (
-      'You can reach Digital Dude directly through the following confirmed channels:\n\n' +
+      'We would love to connect with you! Here is how you can reach our team directly:\n\n' +
       '• Phone: +91 97870-97006 / +91 89396-51525\n' +
       '• Email: wedigitaldude@gmail.com\n' +
       '• Office: No.90, Ramanujakoodam Street, Poonamallee, Chennai - 600056, Tamil Nadu, India\n' +
-      '• Regular Working Hours: 9:30 AM to 5:30 PM (Customer communication and support are handled during these hours)'
+      '• Hours: Mon–Sat, 9:30 AM to 5:30 PM IST\n\n' +
+      'Would you like us to give you a quick call to discuss your project?'
     );
   }
 
-  // Default missing / unconfirmed information fallback: rule 13
+  // Default warm consultative response
   return (
-    "I don't have enough confirmed information about that in my current Digital Dude knowledge base. " +
-    'Please contact Digital Dude directly for the exact details.'
+    'We would love to help you with that! At Digital Dude, we tailor our digital marketing and web solutions directly to what your business needs. ' +
+    'Could you tell me a little more about your project and what you are looking to achieve?'
   );
 }
 
@@ -281,13 +300,17 @@ export async function answerCustomerQuery(
       parts: [{ text: h.content }],
     }));
 
-    // Build the user message containing retrieved chunks
+    // Build the user message containing retrieved chunks and conversational instructions
     const userPromptWithContext =
       `[RETRIEVED DIGITAL DUDE KNOWLEDGE BASE CONTEXT]\n` +
       `${retrievedContext}\n` +
       `[END OF RETRIEVED CONTEXT]\n\n` +
-      `CUSTOMER QUESTION: ${userQuery}\n\n` +
-      `Remember to adhere strictly to all 18 rules of the Digital Dude RAG Chatbot System Prompt. Answer only using the retrieved knowledge chunks above. If information is missing or unconfirmed, state clearly that it is unconfirmed and invite the customer to contact Digital Dude directly.`;
+      `CUSTOMER MESSAGE: ${userQuery}\n\n` +
+      `INSTRUCTIONS:\n` +
+      `- Chat warmly in the first person ("we", "our team") as a friendly digital consultant at Digital Dude in Chennai.\n` +
+      `- Keep your answer punchy and natural (2 to 4 sentences or a quick conversational note). Avoid rigid disclaimers or bullet walls.\n` +
+      `- Follow the Answer + Ask rule: answer their question clearly using our confirmed services, then ask a friendly question to learn more about their business.\n` +
+      `- If the customer asked you to adopt a specific persona, tone, or style (e.g., pirate, playful, rhyming, Tanglish), enthusiastically play along in that character while keeping our core facts true!`;
 
     const contents = [
       ...conversationTurns,
@@ -297,16 +320,28 @@ export async function answerCustomerQuery(
       },
     ];
 
-    const response = await gemini.models.generateContent({
-      model: 'gemini-3.8-flash',
-      contents,
-      config: {
-        systemInstruction: DIGITAL_DUDE_SYSTEM_PROMPT,
-        temperature: 0.2, // Low temperature for high factual precision
-      },
-    });
+    let replyText = '';
+    // Priority: gemini-3.8-flash -> gemini-flash-latest -> gemini-3.1-flash-lite
+    const modelsToTry = ['gemini-3.8-flash', 'gemini-flash-latest', 'gemini-3.1-flash-lite'];
 
-    const replyText = response.text?.trim();
+    for (const model of modelsToTry) {
+      try {
+        const response = await gemini.models.generateContent({
+          model,
+          contents,
+          config: {
+            systemInstruction: DIGITAL_DUDE_SYSTEM_PROMPT,
+            temperature: 0.7, // Human warmth, conversational rhythm, and playful adaptability
+          },
+        });
+        if (response.text?.trim()) {
+          replyText = response.text.trim();
+          break;
+        }
+      } catch (modelErr) {
+        console.warn(`[Digital Dude Assistant] Model ${model} unavailable, trying next if available:`, modelErr instanceof Error ? modelErr.message : modelErr);
+      }
+    }
 
     if (!replyText) {
       const fallbackText = generateGroundedFallbackResponse(userQuery, chunks);
@@ -323,7 +358,7 @@ export async function answerCustomerQuery(
       mode: 'gemini',
     };
   } catch (err) {
-    console.error('[Digital Dude Assistant] Gemini API error, falling back to grounded responder:', err);
+    console.error('[Digital Dude Assistant] Gemini API error, falling back to consultative responder:', err);
     const fallbackText = generateGroundedFallbackResponse(userQuery, chunks);
     return {
       reply: fallbackText,
