@@ -17,6 +17,7 @@ import {
   ChevronDown,
   ChevronUp,
 } from 'lucide-react';
+import { MarkdownContent } from './MarkdownContent';
 
 export interface ChatMessage {
   id: string;
@@ -307,14 +308,22 @@ export const DigitalDudeAssistantWidget: React.FC = () => {
                     {isUser ? (
                       <p className="leading-relaxed whitespace-pre-wrap">{msg.content}</p>
                     ) : (
-                      renderFormattedText(msg.content)
+                      <MarkdownContent content={msg.content} />
                     )}
                   </div>
 
                   {/* Assistant Footer Info (Copy & Grounding Chunks) */}
                   {!isUser && (
-                    <div className="flex items-center gap-2 text-[10px] text-white/40 pl-1">
+                    <div className="flex flex-wrap items-center gap-2 text-[10px] text-white/40 pl-1">
                       <span>{msg.timestamp}</span>
+                      <span>•</span>
+                      <span className={`px-1.5 py-0.5 rounded font-mono text-[9px] ${
+                        msg.mode === 'gemini'
+                          ? 'bg-lime/20 text-lime border border-lime/30 font-semibold'
+                          : 'bg-white/10 text-white/70 border border-white/15'
+                      }`}>
+                        {msg.mode === 'gemini' ? 'Gemini 3.8 Flash' : 'Grounded Engine'}
+                      </span>
                       <span>•</span>
                       <button
                         onClick={() => handleCopy(msg.id, msg.content)}

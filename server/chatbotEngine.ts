@@ -15,8 +15,19 @@ export interface ChatEngineResponse {
 
 /** Server-side Gemini client using @google/genai */
 function getGeminiClient(): GoogleGenAI | null {
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey || apiKey.trim() === '') {
+  let apiKey = process.env.GEMINI_API_KEY?.trim();
+  if (!apiKey) {
+    return null;
+  }
+  // Strip accidental enclosing quotes or curlies if pasted as '{key}' or "'key'"
+  if (
+    (apiKey.startsWith("'") && apiKey.endsWith("'")) ||
+    (apiKey.startsWith('"') && apiKey.endsWith('"')) ||
+    (apiKey.startsWith('{') && apiKey.endsWith('}'))
+  ) {
+    apiKey = apiKey.slice(1, -1).trim();
+  }
+  if (!apiKey) {
     return null;
   }
   return new GoogleGenAI({

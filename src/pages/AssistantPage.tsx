@@ -20,6 +20,7 @@ import {
   PenTool,
 } from 'lucide-react';
 import { AGENCY_INFO } from '../data/agencyData';
+import { MarkdownContent } from '../components/chat/MarkdownContent';
 
 interface Message {
   id: string;
@@ -27,6 +28,7 @@ interface Message {
   content: string;
   timestamp: string;
   retrievedChunks?: { id: string; title: string; category: string }[];
+  mode?: 'gemini' | 'rule_fallback';
 }
 
 const CATEGORY_PROMPTS = [
@@ -135,6 +137,7 @@ export const AssistantPage: React.FC = () => {
           content: data.reply,
           timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
           retrievedChunks: data.retrievedChunks || [],
+          mode: data.mode,
         };
         setMessages((prev) => [...prev, assistantMsg]);
       } else {
@@ -305,13 +308,21 @@ export const AssistantPage: React.FC = () => {
                       {isUser ? (
                         <p className="whitespace-pre-wrap">{msg.content}</p>
                       ) : (
-                        renderFormattedText(msg.content)
+                        <MarkdownContent content={msg.content} />
                       )}
                     </div>
 
                     {!isUser && (
-                      <div className="flex items-center gap-3 text-xs text-white/40 pl-1">
+                      <div className="flex flex-wrap items-center gap-3 text-xs text-white/40 pl-1">
                         <span>{msg.timestamp}</span>
+                        <span>•</span>
+                        <span className={`px-2 py-0.5 rounded font-mono text-[10px] ${
+                          msg.mode === 'gemini'
+                            ? 'bg-lime/20 text-lime border border-lime/30 font-semibold'
+                            : 'bg-white/10 text-white/70 border border-white/15'
+                        }`}>
+                          {msg.mode === 'gemini' ? 'Gemini 3.8 Flash' : 'Grounded Engine'}
+                        </span>
                         <span>•</span>
                         <button
                           onClick={() => handleCopy(msg.id, msg.content)}
