@@ -1,4 +1,3 @@
-import 'dotenv/config';
 import { GoogleGenAI } from '@google/genai';
 import { retrieveKnowledgeChunks, KnowledgeChunk } from './knowledgeBase';
 import { DIGITAL_DUDE_SYSTEM_PROMPT } from './systemPrompt';
@@ -321,8 +320,15 @@ export async function answerCustomerQuery(
     ];
 
     let replyText = '';
-    // Priority: gemini-3.8-flash -> gemini-flash-latest -> gemini-3.1-flash-lite
-    const modelsToTry = ['gemini-3.8-flash', 'gemini-flash-latest', 'gemini-3.1-flash-lite'];
+    const customModel = process.env.GEMINI_MODEL?.trim();
+    const modelsToTry = [
+      ...(customModel ? [customModel] : []),
+      'gemini-1.5-flash',
+      'gemini-2.0-flash',
+      'gemini-2.5-flash',
+      'gemini-3.8-flash',
+      'gemini-1.5-pro',
+    ];
 
     for (const model of modelsToTry) {
       try {
