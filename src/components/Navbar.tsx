@@ -19,6 +19,7 @@ export const Navbar: React.FC = () => {
     { label: 'About Us', to: '/about' },
     { label: 'Services', to: '/services' },
     { label: 'Portfolio', to: '/portfolio' },
+    { label: 'Assistant', to: '/assistant', isAi: true },
     { label: 'Contact', to: '/contact' },
   ];
 
@@ -55,12 +56,17 @@ export const Navbar: React.FC = () => {
                 key={link.label}
                 to={link.to}
                 className={({ isActive }) =>
-                  `px-3 py-2 text-sm font-medium transition-colors ${
+                  `inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium transition-colors ${
                     isActive ? 'text-lime' : 'text-white/60 hover:text-white'
                   }`
                 }
               >
-                {link.label}
+                <span>{link.label}</span>
+                {link.isAi && (
+                  <span className="text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded bg-lime/20 text-lime border border-lime/30">
+                    AI
+                  </span>
+                )}
               </NavLink>
             ))}
           </nav>
@@ -103,12 +109,17 @@ export const Navbar: React.FC = () => {
                   to={link.to}
                   onClick={() => setMobileMenuOpen(false)}
                   className={({ isActive }) =>
-                    `px-3 py-2.5 text-sm font-medium transition-colors ${
+                    `flex items-center justify-between px-3 py-2.5 text-sm font-medium transition-colors ${
                       isActive ? 'text-lime' : 'text-white/80 hover:text-lime'
                     }`
                   }
                 >
-                  {link.label}
+                  <span>{link.label}</span>
+                  {link.isAi && (
+                    <span className="text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded bg-lime/20 text-lime border border-lime/30">
+                      RAG AI
+                    </span>
+                  )}
                 </NavLink>
               ))}
             </div>

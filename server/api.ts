@@ -1,15 +1,49 @@
 import type { IncomingMessage, ServerResponse } from 'node:http';
+import { answerCustomerQuery, type ChatMessage } from './chatbotEngine';
+import { KNOWLEDGE_CHUNKS } from './knowledgeBase';
 
 /** Reads a JSON request body without pulling in body-parser. */
 async function readJson(req: IncomingMessage): Promise<Record<string, unknown>> {
-  const chunks: Buffer[] = [];
-  for await (const chunk of req) chunks.push(chunk as Buffer);
-  if (chunks.length === 0) return {};
-  try {
-    return JSON.parse(Buffer.concat(chunks).toString('utf8'));
-  } catch {
-    return {};
+  if ((req as any).body && typeof (req as any).body === 'object') {
+    return (req as any).body as Record<string, unknown>;
   }
+
+  const contentLength = parseInt(req.headers['content-length'] || '0', 10);
+
+  return new Promise((resolve) => {
+    const chunks: Buffer[] = [];
+    let receivedBytes = 0;
+    let finished = false;
+
+    const finish = () => {
+      if (finished) return;
+      finished = true;
+      clearTimeout(timeout);
+      try {
+        if (chunks.length > 0) {
+          resolve(JSON.parse(Buffer.concat(chunks).toString('utf8')));
+        } else {
+          resolve({});
+        }
+      } catch {
+        resolve({});
+      }
+    };
+
+    const timeout = setTimeout(finish, 800);
+
+    req.on('data', (chunk: Buffer | string) => {
+      const b = Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk);
+      chunks.push(b);
+      receivedBytes += b.length;
+      if (contentLength > 0 && receivedBytes >= contentLength) {
+        finish();
+      }
+    });
+
+    req.on('end', finish);
+    req.on('error', finish);
+  });
 }
 
 function sendJson(res: ServerResponse, status: number, body: unknown) {
@@ -52,14 +86,66 @@ export async function handleContact(req: IncomingMessage, res: ServerResponse) {
     message: body.message!.trim(),
   };
 
-  // Delivery integration goes here (email service, CRM, sheet append...).
-  // Until one is configured the submission is logged so nothing is silently dropped.
   console.log('[contact] new enquiry', {
     ...submission,
     receivedAt: new Date().toISOString(),
   });
 
   return sendJson(res, 200, { ok: true });
+}
+
+export interface ChatRequestBody {
+  message?: string;
+  prompt?: string;
+  history?: ChatMessage[];
+}
+
+/** POST /api/chat & POST /api/assistant */
+export async function handleChat(req: IncomingMessage, res: ServerResponse) {
+  try {
+    const body = (await readJson(req)) as ChatRequestBody;
+    const query = (body.message || body.prompt || '').trim();
+
+    if (!query) {
+      return sendJson(res, 400, {
+        ok: false,
+        error: 'Question or message is required.',
+      });
+    }
+
+    const history = Array.isArray(body.history) ? body.history : [];
+    const result = await answerCustomerQuery(query, history);
+
+    return sendJson(res, 200, {
+      ok: true,
+      reply: result.reply,
+      retrievedChunks: result.retrievedChunks,
+      mode: result.mode,
+    });
+  } catch (err: unknown) {
+    const errorMessage = err instanceof Error ? err.message : String(err);
+    console.error('[Digital Dude Assistant API error]', errorMessage);
+    return sendJson(res, 500, {
+      ok: false,
+      error: 'Unable to process enquiry. Please contact Digital Dude directly.',
+      reply: "I don't have enough confirmed information right now. Please contact Digital Dude directly for exact details.",
+    });
+  }
+}
+
+/** GET /api/assistant/info */
+export function handleAssistantInfo(_req: IncomingMessage, res: ServerResponse) {
+  return sendJson(res, 200, {
+    ok: true,
+    assistantName: 'Digital Dude Assistant',
+    agency: 'Digital Dude',
+    location: 'Chennai, Tamil Nadu, India',
+    operatingSince: 2022,
+    workingHours: '9:30 AM to 5:30 PM',
+    supportedLanguages: ['English', 'Tanglish (Tamil in Latin script)'],
+    knowledgeChunkCount: KNOWLEDGE_CHUNKS.length,
+    chunks: KNOWLEDGE_CHUNKS.map(c => ({ id: c.id, title: c.title, category: c.category })),
+  });
 }
 
 /** Connect/Express-compatible middleware mounting the API routes. */
@@ -70,8 +156,16 @@ export async function apiMiddleware(
 ): Promise<void> {
   const url = (req.url ?? '').split('?')[0];
 
-  if (req.method !== 'POST') return next();
-  if (url === '/api/contact') return handleContact(req, res);
+  if (req.method === 'POST') {
+    if (url === '/api/contact') return handleContact(req, res);
+    if (url === '/api/chat' || url === '/api/assistant') return handleChat(req, res);
+  }
+
+  if (req.method === 'GET') {
+    if (url === '/api/assistant/info' || url === '/api/chat/info') {
+      return handleAssistantInfo(req, res);
+    }
+  }
 
   return next();
 }
