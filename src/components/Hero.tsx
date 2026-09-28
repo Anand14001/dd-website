@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { ArrowRight, CheckCircle2, ChevronRight } from 'lucide-react';
 import { RotatingValue } from './RotatingValue';
 
@@ -52,14 +53,14 @@ export const Hero: React.FC<HeroProps> = ({ onOpenConsultation, onExploreSolutio
 
           {/* Call to actions */}
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 sm:gap-4">
-            <button
-              id="hero-cta-audit"
-              onClick={onOpenConsultation}
+            <Link
+              to="/portfolio"
+              id="hero-cta-portfolio"
               className="group inline-flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-xl text-base font-semibold text-ink bg-lime hover:bg-lime-dim transition-all active:scale-[0.98]"
             >
-              <span>Request Free Growth Audit</span>
+              <span>Visit Portfolio</span>
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-            </button>
+            </Link>
 
             <button
               id="hero-cta-explore"
