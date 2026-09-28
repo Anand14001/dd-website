@@ -92,7 +92,6 @@ export const DigitalDudeAssistantWidget: React.FC = () => {
     setIsLoading(true);
 
     try {
-      // Build lightweight conversation history
       const historyPayload = messages.slice(-5).map((m) => ({
         role: m.role,
         content: m.content,

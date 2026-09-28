@@ -38,6 +38,14 @@ const getIcon = (name: string) => {
 export const WhatWeDoSection: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
+  const [flippedCardId, setFlippedCardId] = useState<string | null>(null);
+
+  const handleCardClick = (id: string) => {
+    // Only toggle on mobile and tablet screens (below lg breakpoint: 1024px)
+    if (typeof window !== 'undefined' && window.innerWidth < 1024) {
+      setFlippedCardId((prev) => (prev === id ? null : id));
+    }
+  };
 
   useEffect(() => {
     const el = sectionRef.current;
@@ -73,6 +81,8 @@ export const WhatWeDoSection: React.FC = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 2xl:gap-10">
           {SERVICES.map((service, idx) => {
             const Icon = getIcon(service.iconName);
+            const isFlippedOnMobile = flippedCardId === service.id;
+
             return (
               <div
                 key={service.id}
@@ -83,9 +93,17 @@ export const WhatWeDoSection: React.FC = () => {
                   transitionDelay: visible ? `${idx * 90}ms` : '0ms',
                 }}
               >
-                <div className="group h-72 lg:h-80" style={{ perspective: '1200px' }}>
+                <div
+                  className="group h-72 lg:h-80 cursor-pointer lg:cursor-default"
+                  style={{ perspective: '1200px' }}
+                  onClick={() => handleCardClick(service.id)}
+                >
                   <div
-                    className="relative w-full h-full transition-transform duration-500 ease-out [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)]"
+                    className={`relative w-full h-full transition-transform duration-500 ease-out [transform-style:preserve-3d] ${
+                      isFlippedOnMobile
+                        ? '[transform:rotateY(180deg)]'
+                        : 'lg:group-hover:[transform:rotateY(180deg)]'
+                    }`}
                   >
                     {/* Front face */}
                     <div className="absolute inset-0 [backface-visibility:hidden] rounded-2xl bg-ink-soft border border-white/10 p-7 flex flex-col items-center justify-center text-center gap-4">
@@ -94,7 +112,8 @@ export const WhatWeDoSection: React.FC = () => {
                       </div>
                       <h3 className="text-lg font-bold text-white">{service.title}</h3>
                       <span className="text-[11px] text-white/40 uppercase tracking-wider">
-                        Hover to explore
+                        <span className="lg:hidden">Tap to explore</span>
+                        <span className="hidden lg:inline">Hover to explore</span>
                       </span>
                     </div>
 
@@ -114,6 +133,7 @@ export const WhatWeDoSection: React.FC = () => {
                       </div>
                       <Link
                         to="/services"
+                        onClick={(e) => e.stopPropagation()}
                         className="inline-flex items-center gap-1.5 text-xs font-bold text-ink mt-4 hover:gap-2.5 transition-all"
                       >
                         <span>Explore Service</span>

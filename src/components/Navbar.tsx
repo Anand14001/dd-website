@@ -71,8 +71,8 @@ export const Navbar: React.FC = () => {
             ))}
           </nav>
 
-          {/* Right Action */}
-          <div className="hidden sm:flex items-center gap-4">
+          {/* Right Action (Desktop only: lg+) */}
+          <div className="hidden lg:flex items-center gap-4">
             <Link
               id="nav-consultation-btn"
               to="/contact"
@@ -83,7 +83,7 @@ export const Navbar: React.FC = () => {
             </Link>
           </div>
 
-          {/* Mobile menu button */}
+          {/* Mobile menu button (shown on small screens & tablets below lg) */}
           <div className="flex lg:hidden items-center gap-2">
             <button
               id="mobile-menu-toggle-btn"

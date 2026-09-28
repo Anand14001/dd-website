@@ -1,6 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { ArrowRight, CheckCircle2, ChevronRight, Sparkles } from 'lucide-react';
+import { ArrowRight, CheckCircle2, ChevronRight } from 'lucide-react';
 import { RotatingValue } from './RotatingValue';
 
 interface HeroProps {
@@ -32,17 +31,6 @@ export const Hero: React.FC<HeroProps> = ({ onOpenConsultation, onExploreSolutio
       <div className="w-full max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 relative z-10">
         {/* Centered, full-bleed headline block */}
         <div className="max-w-4xl 2xl:max-w-5xl mx-auto text-center space-y-6">
-          {/* Assistant Banner Pill */}
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-lime/10 border border-lime/30 text-lime text-xs font-semibold">
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>Digital Dude Assistant is live</span>
-            <span className="w-1 h-1 bg-lime rounded-full" />
-            <Link to="/assistant" className="hover:underline flex items-center gap-1 font-bold">
-              <span>Ask AI in English / Tanglish</span>
-              <ChevronRight className="w-3 h-3" />
-            </Link>
-          </div>
-
           <h1 className="text-[2.25rem] sm:text-5xl lg:text-6xl xl:text-[4.25rem] 2xl:text-[4.75rem] font-bold text-white tracking-[-0.02em] leading-[1.05]">
             Grow Your Business With The{' '}
             <span className="text-outline-accent">Right Blend Of Technology &amp; Marketing</span>
@@ -72,15 +60,6 @@ export const Hero: React.FC<HeroProps> = ({ onOpenConsultation, onExploreSolutio
               <span>Request Free Growth Audit</span>
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </button>
-
-            <Link
-              to="/assistant"
-              id="hero-cta-assistant"
-              className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl text-base font-semibold text-white bg-white/[0.05] hover:bg-white/[0.1] border border-lime/30 hover:border-lime/60 transition-all active:scale-[0.98]"
-            >
-              <Sparkles className="w-4 h-4 text-lime" />
-              <span>Ask Digital Dude Assistant</span>
-            </Link>
 
             <button
               id="hero-cta-explore"
