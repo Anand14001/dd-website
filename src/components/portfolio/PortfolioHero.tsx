@@ -1,8 +1,7 @@
 import React from 'react';
 import { motion } from 'motion/react';
-import { LayoutGrid } from 'lucide-react';
 import { PORTFOLIO_ITEMS } from '../../data/portfolioData';
-import { PortfolioIllustration } from './PortfolioIllustration';
+import { SectionHeading } from '../home/SectionHeading';
 
 export const PortfolioHero: React.FC = () => {
   const projectCount = PORTFOLIO_ITEMS.length;
@@ -23,7 +22,7 @@ export const PortfolioHero: React.FC = () => {
         className="pointer-events-none absolute inset-0"
         style={{
           background:
-            'radial-gradient(ellipse 55% 55% at 72% 45%, rgba(191,255,0,0.07) 0%, transparent 70%)',
+            'radial-gradient(ellipse 55% 55% at 50% 45%, rgba(191,255,0,0.07) 0%, transparent 70%)',
         }}
       />
       <div
@@ -40,46 +39,23 @@ export const PortfolioHero: React.FC = () => {
       </span>
 
       <div className="relative mx-auto w-full max-w-[1720px] px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16">
-        <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2 lg:gap-8">
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-            style={{ willChange: 'transform' }}
-          >
-            <div className="inline-flex items-center gap-2 rounded-full border border-lime/20 bg-lime/10 px-3 py-1 text-xs font-semibold text-lime">
-              <LayoutGrid className="h-3.5 w-3.5" />
-              <span>Our Work</span>
-            </div>
-
-            <h1 className="mt-6 text-5xl font-bold leading-[0.95] tracking-[-0.03em] text-white sm:text-6xl lg:text-7xl">
-              THE WORK
-              <br />
-              <span className="text-lime">SPEAKS FIRST.</span>
-            </h1>
-
-            <p className="mt-7 max-w-xl text-lg leading-[1.7] text-white/60">
-              Websites, brand identities and creative work delivered for businesses across Chennai
-              and beyond. Browse by discipline below.
-            </p>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
-            className="flex justify-center lg:justify-end"
-            style={{ willChange: 'transform' }}
-          >
-            <PortfolioIllustration />
-          </motion.div>
+        <div className="flex flex-col items-center text-center">
+          <SectionHeading
+            eyebrow="Our Work"
+            lineOne="THE WORK"
+            lineTwo="SPEAKS FIRST."
+            lineTwoClassName="text-transparent [-webkit-text-stroke:1.5px_#BFFF00] sm:[-webkit-text-stroke:2px_#BFFF00]"
+            align="center"
+            className="text-center"
+            intro="Websites, brand identities and creative work delivered for businesses across Chennai and beyond. Browse by discipline below."
+          />
         </div>
 
         <motion.dl
           initial="hidden"
           animate="visible"
           variants={{ visible: { transition: { staggerChildren: 0.08, delayChildren: 0.35 } } }}
-          className="mt-16 grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-white/10 bg-white/10 lg:grid-cols-4"
+          className="mt-16 grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-white/10 bg-white/10 lg:grid-cols-4 max-w-5xl mx-auto"
         >
           {stats.map((stat) => (
             <motion.div
@@ -88,7 +64,7 @@ export const PortfolioHero: React.FC = () => {
                 hidden: { opacity: 0, y: 16 },
                 visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
               }}
-              className="bg-ink-soft px-6 py-7"
+              className="bg-ink-soft px-6 py-7 text-center"
             >
               <dt className="sr-only">{stat.label}</dt>
               <dd>

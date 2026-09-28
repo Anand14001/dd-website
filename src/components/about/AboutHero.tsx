@@ -1,9 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { ArrowRight, TrendingUp, Users } from 'lucide-react';
-import { TRAFFIC_STAT } from '../../data/aboutPageData';
-import { AboutIllustration } from './AboutIllustration';
+import { ArrowRight } from 'lucide-react';
+import { SectionHeading } from '../home/SectionHeading';
 
 export const AboutHero: React.FC = () => {
   return (
@@ -13,7 +12,7 @@ export const AboutHero: React.FC = () => {
         className="pointer-events-none absolute inset-0"
         style={{
           background:
-            'radial-gradient(ellipse 55% 55% at 72% 45%, rgba(191,255,0,0.07) 0%, transparent 70%)',
+            'radial-gradient(ellipse 55% 55% at 50% 45%, rgba(191,255,0,0.07) 0%, transparent 70%)',
         }}
       />
       <div
@@ -30,78 +29,36 @@ export const AboutHero: React.FC = () => {
       </span>
 
       <div className="relative mx-auto w-full max-w-[1720px] px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16">
-        <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2 lg:gap-8">
-          {/* Copy */}
+        <div className="flex flex-col items-center text-center">
+          <SectionHeading
+            eyebrow="About Us"
+            lineOne="WHO WE"
+            lineTwo="REALLY ARE."
+            lineTwoClassName="text-transparent [-webkit-text-stroke:1.5px_#BFFF00] sm:[-webkit-text-stroke:2px_#BFFF00]"
+            align="center"
+            className="text-center"
+            intro="At Digital Dude, we empower businesses to grow with the right blend of technology and marketing. We craft tailored digital solutions that enhance visibility, attract the right audience, and drive measurable sales."
+          />
+
           <motion.div
-            initial={{ opacity: 0, y: 40 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-            style={{ willChange: 'transform' }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4"
           >
-            <div className="inline-flex items-center gap-2 rounded-full border border-lime/20 bg-lime/10 px-3 py-1 text-xs font-semibold text-lime">
-              <Users className="h-3.5 w-3.5" />
-              <span>About Us</span>
-            </div>
-
-            <h1 className="mt-6 text-5xl font-bold leading-[0.95] tracking-[-0.03em] text-white sm:text-6xl lg:text-7xl">
-              WHO ARE
-              <br />
-              <span className="text-lime">WE.!</span>
-            </h1>
-
-            <div className="mt-7 max-w-xl space-y-4 text-lg leading-[1.7] text-white/60">
-              <p>
-                At <strong className="font-semibold text-white">Digital Dude</strong>, we empower
-                businesses to grow with the right blend of technology and marketing.
-              </p>
-              <p>
-                We craft tailored digital solutions that enhance visibility, attract the right
-                audience, and drive measurable sales.
-              </p>
-              <p className="border-l-2 border-lime/60 pl-4 text-base text-white/50">
-                Our mission is simple — to transform businesses with smart strategies and unlock
-                their true growth potential.
-              </p>
-            </div>
-
             <Link
               to="/services"
-              className="group mt-9 inline-flex items-center gap-2 rounded-full bg-lime px-7 py-3.5 text-sm font-bold text-ink transition-colors hover:bg-lime-dim"
+              className="group inline-flex items-center gap-2 rounded-xl bg-lime px-7 py-3.5 text-sm font-bold text-ink transition-all hover:bg-lime-dim active:scale-95"
             >
-              Learn more
+              <span>Explore Our Services</span>
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
             </Link>
-          </motion.div>
-
-          {/* Illustration with the traffic stat pinned to it */}
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
-            className="relative flex justify-center lg:justify-end"
-            style={{ willChange: 'transform' }}
-          >
-            <AboutIllustration />
-
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5, delay: 0.6, ease: [0.22, 1, 0.36, 1] }}
-              className="absolute bottom-2 left-0 rounded-2xl border border-white/10 bg-ink-soft/90 p-5 backdrop-blur-sm lg:left-4"
+            <Link
+              to="/contact"
+              className="inline-flex items-center gap-2 rounded-xl border border-white/15 bg-white/[0.04] px-7 py-3.5 text-sm font-semibold text-white/80 hover:text-white hover:bg-white/[0.08] transition-all"
             >
-              <span className="text-[11px] font-semibold uppercase tracking-wider text-white/40">
-                {TRAFFIC_STAT.label}
-              </span>
-              <div className="mt-1.5 flex items-baseline gap-2.5">
-                <span className="text-3xl font-bold tracking-[-0.02em] text-white">
-                  {TRAFFIC_STAT.value}
-                </span>
-                <span className="inline-flex items-center gap-1 text-sm font-bold text-lime">
-                  <TrendingUp className="h-3.5 w-3.5" />
-                  {TRAFFIC_STAT.delta}
-                </span>
-              </div>
-            </motion.div>
+              <span>Get in Touch</span>
+            </Link>
           </motion.div>
         </div>
       </div>

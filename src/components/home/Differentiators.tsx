@@ -1,6 +1,7 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React from 'react';
 import { motion } from 'motion/react';
 import { WHY_CHOOSE_US } from '../../data/portfolioPageData';
+import { SectionHeading } from './SectionHeading';
 
 /** Deterministic star positions — a seeded generator keeps them stable across renders. */
 const STARS = (() => {
@@ -19,24 +20,6 @@ const STARS = (() => {
 })();
 
 export const Differentiators: React.FC = () => {
-  const headingRef = useRef<HTMLDivElement>(null);
-  const [revealed, setRevealed] = useState(false);
-
-  useEffect(() => {
-    const el = headingRef.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setRevealed(true);
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.4 },
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
 
   return (
     <section className="relative overflow-hidden bg-ink py-24 lg:py-32">
@@ -60,18 +43,15 @@ export const Differentiators: React.FC = () => {
 
       <div className="relative mx-auto w-full max-w-[1600px] px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16">
         {/* Heading */}
-        <div ref={headingRef} className={`text-center ${revealed ? 'is-revealed' : ''}`}>
-          <span className="text-[11px] font-bold uppercase tracking-[0.25em] text-lime">
-            Why Digital Dude
-          </span>
-
-          <h2 className="relative mt-4 overflow-hidden text-4xl font-bold leading-[1.05] tracking-[-0.02em] sm:text-5xl lg:text-6xl">
-            <span className="dd-wipe-text block">
-              <span className="block text-white">WHAT MAKES</span>
-              <span className="dd-outline-heading block">US DIFFERENT?</span>
-            </span>
-          </h2>
-        </div>
+        <SectionHeading
+          eyebrow="Why Digital Dude"
+          lineOne="WHAT MAKES"
+          lineTwo="US DIFFERENT?"
+          lineTwoClassName="text-transparent [-webkit-text-stroke:1.5px_#BFFF00] sm:[-webkit-text-stroke:2px_#BFFF00]"
+          align="center"
+          className="text-center"
+          intro="We combine strategic thinking, engineering precision, and rapid execution to turn your digital presence into a high-performance growth engine."
+        />
 
         {/* Timeline */}
         <div className="relative mt-20">

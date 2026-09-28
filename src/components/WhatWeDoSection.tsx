@@ -70,11 +70,13 @@ export const WhatWeDoSection: React.FC = () => {
       <div className="w-full max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 relative z-10">
         {/* Header */}
         <SectionHeading
-          eyebrow="About us"
+          eyebrow="About Us"
           lineOne="ENGINEERED FOR"
-          lineTwo="VISIBILITY, TRAFFIC & SALES."
+          lineTwo="VISIBILITY & SALES."
+          lineTwoClassName="text-transparent [-webkit-text-stroke:1.5px_#BFFF00] sm:[-webkit-text-stroke:2px_#BFFF00]"
+          align="center"
+          className="mb-16 text-center"
           intro="Every business has unique growth bottlenecks. We craft custom-engineered solutions combining modern development, algorithmic marketing, and sales automation."
-          className="mb-16"
         />
 
         {/* Flip Card Grid */}

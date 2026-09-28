@@ -8,6 +8,7 @@ interface SectionHeadingProps {
   intro?: string;
   align?: 'left' | 'center';
   className?: string;
+  lineTwoClassName?: string;
 }
 
 /**
@@ -21,6 +22,7 @@ export const SectionHeading: React.FC<SectionHeadingProps> = ({
   intro,
   align = 'left',
   className = '',
+  lineTwoClassName,
 }) => {
   const ref = useRef<HTMLDivElement>(null);
   const [revealed, setRevealed] = useState(false);
@@ -56,7 +58,7 @@ export const SectionHeading: React.FC<SectionHeadingProps> = ({
         <span className="dd-wipe-text block">
           {lineOne}
           <br />
-          <span className="text-lime">{lineTwo}</span>
+          <span className={lineTwoClassName || 'text-lime'}>{lineTwo}</span>
         </span>
 
         {/* The bar that sweeps across the reveal. */}

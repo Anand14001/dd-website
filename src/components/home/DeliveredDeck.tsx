@@ -1,180 +1,253 @@
-import React, { useMemo, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'motion/react';
-import { PORTFOLIO_ITEMS, PortfolioItem } from '../../data/portfolioData';
 import { SectionHeading } from './SectionHeading';
 
-interface DeckCard {
+interface DeliveredCard {
+  id: string;
   category: string;
   value: string;
   metric: string;
   caption: string;
-  /** Scatter position on the stage, as percentages. */
-  left: string;
-  top: string;
-  rotate: number;
+  transformClass: string;
+  baseZIndex: number;
+  style: {
+    card: string;
+    label: string;
+    value: string;
+    body: string;
+    sub: string;
+    shadow: string;
+  };
 }
 
-/** Categories to surface, in deck order, with the wording for each card. */
-const DECK_SPEC: Array<{
-  category: PortfolioItem['category'];
-  metric: string;
-  caption: string;
-  left: string;
-  top: string;
-  rotate: number;
-}> = [
+const CARDS_DATA: DeliveredCard[] = [
   {
-    category: 'Website & App Development',
-    metric: 'Sites shipped',
-    caption: 'Live client builds',
-    left: '1.5rem',
-    top: '6%',
-    rotate: -7,
+    id: 'social-media',
+    category: 'SOCIAL MEDIA',
+    value: '200K+',
+    metric: 'Audience Reach',
+    caption: 'Across organic & paid campaigns',
+    transformClass:
+      'origin-bottom -rotate-[8deg] translate-y-[10px] min-[360px]:-rotate-[9deg] min-[360px]:translate-y-[12px] sm:-rotate-[11deg] sm:translate-y-[22px]',
+    baseZIndex: 10,
+    style: {
+      card: 'bg-ink border border-white/10',
+      label: 'text-lime',
+      value: 'text-lime',
+      body: 'text-white',
+      sub: 'text-white/60',
+      shadow: 'shadow-[0_22px_45px_-12px_rgba(0,0,0,0.85)]',
+    },
   },
   {
-    category: 'Package Design',
-    metric: 'Packs designed',
-    caption: 'Retail-ready artwork',
-    left: 'calc(50% - 9rem)',
-    top: '0%',
-    rotate: 4,
+    id: 'web-apps',
+    category: 'WEB & APPS',
+    value: '25+',
+    metric: 'Platforms Shipped',
+    caption: 'High-converting custom architecture',
+    transformClass:
+      'origin-bottom -rotate-[4deg] translate-y-[3px] min-[360px]:-rotate-[4deg] min-[360px]:translate-y-[4px] sm:-rotate-[5deg] sm:translate-y-[8px]',
+    baseZIndex: 20,
+    style: {
+      card: 'bg-lime border border-lime/40',
+      label: 'text-ink/80',
+      value: 'text-ink',
+      body: 'text-ink font-bold',
+      sub: 'text-ink/75',
+      shadow: 'shadow-[0_22px_45px_-12px_rgba(0,0,0,0.45)]',
+    },
   },
   {
-    category: 'Logo',
-    metric: 'Identities built',
-    caption: 'Marks and brand systems',
-    left: 'calc(100% - 17.5rem)',
-    top: '8%',
-    rotate: -3,
+    id: 'paid-roi',
+    category: 'GROWTH & ROI',
+    value: '300%',
+    metric: 'Average ROI',
+    caption: 'Measurable commercial sales impact',
+    transformClass:
+      'origin-bottom rotate-0 -translate-y-[5px] min-[360px]:-translate-y-[6px] sm:-translate-y-[10px]',
+    baseZIndex: 30,
+    style: {
+      card: 'bg-white border border-black/10',
+      label: 'text-ink/60',
+      value: 'text-ink',
+      body: 'text-ink font-bold',
+      sub: 'text-ink/65',
+      shadow: 'shadow-[0_25px_50px_-12px_rgba(0,0,0,0.35)]',
+    },
   },
   {
-    category: 'Social Media Posters',
-    metric: 'Campaign creatives',
-    caption: 'Built for the feed',
-    left: '3.5rem',
-    top: '48%',
-    rotate: 6,
+    id: 'packaging-design',
+    category: 'BRAND & PACKAGING',
+    value: '80+',
+    metric: 'Designs Delivered',
+    caption: 'Retail-ready packs & brand systems',
+    transformClass:
+      'origin-bottom rotate-[4deg] translate-y-[3px] min-[360px]:rotate-[4deg] min-[360px]:translate-y-[4px] sm:rotate-[5deg] sm:translate-y-[8px]',
+    baseZIndex: 20,
+    style: {
+      card: 'bg-ink border border-white/10',
+      label: 'text-lime',
+      value: 'text-lime',
+      body: 'text-white',
+      sub: 'text-white/60',
+      shadow: 'shadow-[0_22px_45px_-12px_rgba(0,0,0,0.85)]',
+    },
   },
   {
-    category: 'Corporate Needs',
-    metric: 'Corporate collateral',
-    caption: 'Decks, profiles, print',
-    left: 'calc(50% - 3rem)',
-    top: '54%',
-    rotate: -5,
+    id: 'reputation-reviews',
+    category: 'REPUTATION',
+    value: '100+',
+    metric: 'Trusted Clients',
+    caption: '5-Star verified client satisfaction',
+    transformClass:
+      'origin-bottom rotate-[8deg] translate-y-[10px] min-[360px]:rotate-[9deg] min-[360px]:translate-y-[12px] sm:rotate-[11deg] sm:translate-y-[22px]',
+    baseZIndex: 10,
+    style: {
+      card: 'bg-lime border border-lime/40',
+      label: 'text-ink/80',
+      value: 'text-ink',
+      body: 'text-ink font-bold',
+      sub: 'text-ink/75',
+      shadow: 'shadow-[0_22px_45px_-12px_rgba(0,0,0,0.45)]',
+    },
   },
-  {
-    category: 'Business Cards',
-    metric: 'Card systems',
-    caption: 'Print-ready sets',
-    left: 'calc(100% - 18.5rem)',
-    top: '46%',
-    rotate: 8,
-  },
-];
-
-/** Three palettes cycling through the stack. */
-const VARIANTS = [
-  { card: 'bg-ink border-white/10', label: 'text-lime/60', value: 'text-lime', body: 'text-lime' },
-  { card: 'bg-lime border-transparent', label: 'text-ink/60', value: 'text-ink', body: 'text-ink' },
-  { card: 'bg-white border-black/10', label: 'text-ink/50', value: 'text-ink', body: 'text-ink' },
 ];
 
 export const DeliveredDeck: React.FC = () => {
-  const stageRef = useRef<HTMLDivElement>(null);
+  const [activeCardId, setActiveCardId] = useState<string | null>(null);
+  const deckRef = useRef<HTMLDivElement>(null);
 
-  // Counts come straight from the portfolio, so the deck can never drift from the work.
-  const cards: DeckCard[] = useMemo(
-    () =>
-      DECK_SPEC.map((spec) => ({
-        category: spec.category,
-        value: String(PORTFOLIO_ITEMS.filter((i) => i.category === spec.category).length),
-        metric: spec.metric,
-        caption: spec.caption,
-        left: spec.left,
-        top: spec.top,
-        rotate: spec.rotate,
-      })),
-    [],
-  );
+  // Close the expanded card when user taps or clicks somewhere outside the deck
+  useEffect(() => {
+    if (!activeCardId) return;
+
+    const handleOutsideClick = (event: MouseEvent | TouchEvent) => {
+      if (deckRef.current && !deckRef.current.contains(event.target as Node)) {
+        setActiveCardId(null);
+      }
+    };
+
+    document.addEventListener('mousedown', handleOutsideClick);
+    document.addEventListener('touchstart', handleOutsideClick);
+
+    return () => {
+      document.removeEventListener('mousedown', handleOutsideClick);
+      document.removeEventListener('touchstart', handleOutsideClick);
+    };
+  }, [activeCardId]);
+
+  const handleCardClick = (e: React.MouseEvent, id: string) => {
+    e.stopPropagation();
+    setActiveCardId((prev) => (prev === id ? null : id));
+  };
 
   return (
-    <section className="relative overflow-hidden bg-ink-soft py-24 lg:py-32">
+    <section className="relative overflow-hidden bg-ink-soft py-20 sm:py-24 lg:py-32">
+      {/* Subtle ambient lighting */}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0"
         style={{
           background:
-            'radial-gradient(ellipse 50% 50% at 70% 50%, rgba(191,255,0,0.06) 0%, transparent 70%)',
+            'radial-gradient(ellipse 60% 50% at 50% 55%, rgba(191,255,0,0.05) 0%, transparent 70%)',
         }}
       />
 
       <div className="relative mx-auto w-full max-w-[1720px] px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16">
+        {/* Section Heading matching reference layout */}
         <SectionHeading
-          eyebrow="Our output"
+          eyebrow="Real Results"
           lineOne="WHAT WE'VE"
           lineTwo="DELIVERED."
-          intro="Every number below is a piece of work in our portfolio — not a projection. Drag the cards around."
+          lineTwoClassName="text-transparent [-webkit-text-stroke:1.5px_#BFFF00] sm:[-webkit-text-stroke:2px_#BFFF00]"
+          align="center"
+          className="text-center"
+          intro="Every number below is a real result shipped for our clients — engineered for visibility, engagement, and sales."
         />
 
-        {/* Scattered, draggable deck (md and up) */}
+        {/* Fanned Overlapping Cards Deck (Desktop & Mobile) */}
         <div
-          ref={stageRef}
-          className="relative mt-16 hidden h-[28rem] lg:h-[30rem] md:block"
+          ref={deckRef}
+          className="relative mt-12 sm:mt-16 lg:mt-20 flex justify-center items-center py-6 sm:py-10"
         >
-          {cards.map((card, i) => {
-            const v = VARIANTS[i % VARIANTS.length];
+          <div className="flex items-center justify-center select-none max-w-full">
+            {CARDS_DATA.map((card, index) => {
+              const isActive = activeCardId === card.id;
 
-            return (
-              <motion.article
-                key={card.category}
-                drag
-                dragConstraints={stageRef}
-                dragMomentum={false}
-                dragElastic={0.12}
-                whileDrag={{ scale: 1.06, zIndex: 50 }}
-                whileHover={{ scale: 1.03, rotate: 0 }}
-                initial={{ opacity: 0, y: 30, rotate: card.rotate }}
-                whileInView={{ opacity: 1, y: 0, rotate: card.rotate }}
-                viewport={{ once: true, margin: '-80px' }}
-                transition={{ duration: 0.55, delay: i * 0.08, ease: [0.22, 1, 0.36, 1] }}
-                style={{ left: card.left, top: card.top }}
-                className={`absolute w-52 cursor-grab rounded-3xl border p-6 shadow-2xl active:cursor-grabbing lg:w-56 ${v.card}`}
-              >
-                <span
-                  className={`mb-4 block text-[0.6rem] font-bold uppercase tracking-widest ${v.label}`}
+              return (
+                <motion.article
+                  key={card.id}
+                  onClick={(e) => handleCardClick(e, card.id)}
+                  initial={{ opacity: 0, y: 35 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: '-50px' }}
+                  transition={{
+                    duration: 0.6,
+                    delay: index * 0.08,
+                    ease: [0.22, 1, 0.36, 1],
+                  }}
+                  style={{
+                    zIndex: isActive ? 50 : card.baseZIndex,
+                  }}
+                  className={`group relative cursor-pointer transition-all duration-300 ease-out
+                    /* Responsive Dimensions */
+                    w-[100px] min-[360px]:w-[110px] min-[400px]:w-[124px] sm:w-[160px] md:w-[200px] lg:w-[245px] xl:w-[265px]
+                    h-[165px] min-[360px]:h-[180px] min-[400px]:h-[195px] sm:h-[245px] md:h-[295px] lg:h-[330px] xl:h-[350px]
+                    rounded-2xl sm:rounded-3xl p-3 min-[360px]:p-3.5 sm:p-5 md:p-6 lg:p-7
+                    flex flex-col justify-between
+                    ${card.style.card}
+                    ${card.style.shadow}
+                    /* Overlap Margins */
+                    ${
+                      index > 0
+                        ? '-ml-[44px] min-[360px]:-ml-[48px] min-[400px]:-ml-[54px] sm:-ml-[68px] md:-ml-[80px] lg:-ml-[90px] xl:-ml-[95px]'
+                        : ''
+                    }
+                    /* Transform on Mobile / Default state */
+                    ${
+                      isActive
+                        ? '!scale-110 !-translate-y-5 !rotate-0 ring-2 ring-lime/60 shadow-2xl'
+                        : card.transformClass
+                    }
+                    /* Hover Elevate on Desktop */
+                    lg:hover:!scale-105 lg:hover:!-translate-y-6 lg:hover:!rotate-0 lg:hover:!z-50
+                  `}
                 >
-                  {card.category}
-                </span>
-                <span className={`mb-2 block text-5xl font-black leading-none ${v.value}`}>
-                  {card.value}
-                </span>
-                <span className={`block text-base font-bold ${v.body}`}>{card.metric}</span>
-                <span className={`mt-1.5 block text-sm opacity-50 ${v.body}`}>{card.caption}</span>
-              </motion.article>
-            );
-          })}
-        </div>
+                  {/* Top Category Tag */}
+                  <div>
+                    <span
+                      className={`block text-[8px] min-[360px]:text-[9px] sm:text-[10px] md:text-[11px] font-extrabold uppercase tracking-wider md:tracking-widest ${card.style.label}`}
+                    >
+                      {card.category}
+                    </span>
+                  </div>
 
-        {/* Plain grid on small screens, where a drag surface would fight the page scroll. */}
-        <div className="mt-12 grid grid-cols-2 gap-4 md:hidden">
-          {cards.map((card, i) => {
-            const v = VARIANTS[i % VARIANTS.length];
+                  {/* Main Metric & Value */}
+                  <div className="my-auto py-1">
+                    <span
+                      className={`block text-2xl min-[360px]:text-3xl sm:text-4xl md:text-5xl lg:text-[3.25rem] xl:text-6xl font-black leading-none tracking-tight ${card.style.value}`}
+                    >
+                      {card.value}
+                    </span>
+                    <span
+                      className={`mt-1 sm:mt-1.5 md:mt-2 block text-[11px] min-[360px]:text-xs sm:text-sm md:text-base lg:text-lg font-bold leading-snug ${card.style.body}`}
+                    >
+                      {card.metric}
+                    </span>
+                  </div>
 
-            return (
-              <div key={card.category} className={`rounded-2xl border p-5 ${v.card}`}>
-                <span
-                  className={`mb-3 block text-[0.6rem] font-bold uppercase tracking-widest ${v.label}`}
-                >
-                  {card.category}
-                </span>
-                <span className={`mb-1.5 block text-4xl font-black leading-none ${v.value}`}>
-                  {card.value}
-                </span>
-                <span className={`block text-sm font-bold ${v.body}`}>{card.metric}</span>
-              </div>
-            );
-          })}
+                  {/* Subtitle / Caption */}
+                  <div className="pt-1">
+                    <span
+                      className={`block text-[8px] min-[360px]:text-[9px] sm:text-xs md:text-xs lg:text-sm leading-tight ${card.style.sub}`}
+                    >
+                      {card.caption}
+                    </span>
+                  </div>
+                </motion.article>
+              );
+            })}
+          </div>
         </div>
       </div>
     </section>

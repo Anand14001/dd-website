@@ -1,27 +1,22 @@
 import React from 'react';
-import { Star, MessageSquareQuote, ShieldCheck } from 'lucide-react';
+import { Star, ShieldCheck } from 'lucide-react';
 import { TESTIMONIALS } from '../data/agencyData';
+import { SectionHeading } from './home/SectionHeading';
 
 export const TestimonialsSection: React.FC = () => {
   return (
     <section id="testimonials" className="py-24 lg:py-32 bg-ink relative border-t border-white/10">
       <div className="w-full max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16">
         {/* Header */}
-        <div className="max-w-3xl 2xl:max-w-4xl mx-auto text-center space-y-5 mb-16">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-lime/10 border border-lime/20 text-xs font-semibold text-lime">
-            <MessageSquareQuote className="w-3.5 h-3.5" />
-            <span>Client Feedback &amp; Reviews</span>
-          </div>
-
-          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white tracking-[-0.02em] leading-[1.05]">
-            Trusted By Business Leaders
-          </h2>
-
-          <p className="text-white/60 text-sm sm:text-base leading-[1.7]">
-            See how our tailored technology and performance marketing have delivered quantifiable
-            returns for executives, founders, and marketing directors.
-          </p>
-        </div>
+        <SectionHeading
+          eyebrow="Client Reviews"
+          lineOne="TRUSTED BY"
+          lineTwo="BUSINESS LEADERS."
+          lineTwoClassName="text-transparent [-webkit-text-stroke:1.5px_#BFFF00] sm:[-webkit-text-stroke:2px_#BFFF00]"
+          align="center"
+          className="mb-16 text-center"
+          intro="See how our tailored technology and performance marketing have delivered quantifiable returns for executives, founders, and marketing directors."
+        />
 
         {/* Testimonials Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">

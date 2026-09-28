@@ -45,15 +45,19 @@ export const WorkCarousel: React.FC = () => {
   return (
     <section className="bg-ink py-24 lg:py-32">
       <div className="mx-auto w-full max-w-[1720px] px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16">
-        <div className="flex flex-wrap items-end justify-between gap-6">
+        <div className="flex flex-col items-center text-center">
           <SectionHeading
             eyebrow="Portfolio"
             lineOne="CHECK OUT"
             lineTwo="OUR RECENT WORK."
+            lineTwoClassName="text-transparent [-webkit-text-stroke:1.5px_#BFFF00] sm:[-webkit-text-stroke:2px_#BFFF00]"
+            align="center"
+            className="text-center"
+            intro="Explore live platforms, packaging systems, and digital brands built to perform."
           />
 
           {/* Rail controls */}
-          <div className="flex items-center gap-2">
+          <div className="mt-8 flex items-center justify-center gap-3">
             <button
               onClick={() => scrollByCard(-1)}
               disabled={atStart}
@@ -62,6 +66,9 @@ export const WorkCarousel: React.FC = () => {
             >
               <ArrowLeft className="h-4 w-4" />
             </button>
+            <span className="text-xs font-semibold uppercase tracking-wider text-white/40">
+              Drag or Navigate
+            </span>
             <button
               onClick={() => scrollByCard(1)}
               disabled={atEnd}

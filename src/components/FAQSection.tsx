@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { HelpCircle, ChevronDown, ChevronUp } from 'lucide-react';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 import { FAQS } from '../data/agencyData';
+import { SectionHeading } from './home/SectionHeading';
 
 export const FAQSection: React.FC = () => {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
@@ -13,20 +14,15 @@ export const FAQSection: React.FC = () => {
     <section id="faq" className="py-24 lg:py-32 bg-ink-soft relative border-t border-white/10">
       <div className="w-full max-w-5xl 2xl:max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 xl:px-12">
         {/* Header */}
-        <div className="text-center space-y-5 mb-14">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-lime/10 border border-lime/20 text-xs font-semibold text-lime">
-            <HelpCircle className="w-3.5 h-3.5" />
-            <span>Common Questions</span>
-          </div>
-
-          <h2 className="text-4xl sm:text-5xl font-bold text-white tracking-[-0.02em] leading-[1.05]">
-            Frequently Asked Questions
-          </h2>
-
-          <p className="text-white/60 text-sm sm:text-base">
-            Everything you need to know about partnering with Digital Dude.
-          </p>
-        </div>
+        <SectionHeading
+          eyebrow="Common Questions"
+          lineOne="FREQUENTLY ASKED"
+          lineTwo="QUESTIONS."
+          lineTwoClassName="text-transparent [-webkit-text-stroke:1.5px_#BFFF00] sm:[-webkit-text-stroke:2px_#BFFF00]"
+          align="center"
+          className="mb-14 text-center"
+          intro="Everything you need to know about partnering with Digital Dude."
+        />
 
         {/* Accordion */}
         <div className="space-y-3">
