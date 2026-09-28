@@ -4,8 +4,17 @@ import { KNOWLEDGE_CHUNKS } from './knowledgeBase';
 
 /** Reads a JSON request body without pulling in body-parser. */
 async function readJson(req: IncomingMessage): Promise<Record<string, unknown>> {
-  if ((req as any).body && typeof (req as any).body === 'object') {
-    return (req as any).body as Record<string, unknown>;
+  if ((req as any).body) {
+    if (typeof (req as any).body === 'object' && (req as any).body !== null) {
+      return (req as any).body as Record<string, unknown>;
+    }
+    if (typeof (req as any).body === 'string') {
+      try {
+        return JSON.parse((req as any).body);
+      } catch {
+        return {};
+      }
+    }
   }
 
   const contentLength = parseInt(req.headers['content-length'] || '0', 10);
@@ -21,7 +30,8 @@ async function readJson(req: IncomingMessage): Promise<Record<string, unknown>> 
       clearTimeout(timeout);
       try {
         if (chunks.length > 0) {
-          resolve(JSON.parse(Buffer.concat(chunks).toString('utf8')));
+          const raw = Buffer.concat(chunks).toString('utf8');
+          resolve(JSON.parse(raw));
         } else {
           resolve({});
         }
@@ -30,7 +40,7 @@ async function readJson(req: IncomingMessage): Promise<Record<string, unknown>> 
       }
     };
 
-    const timeout = setTimeout(finish, 800);
+    const timeout = setTimeout(finish, 1200);
 
     req.on('data', (chunk: Buffer | string) => {
       const b = Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk);
@@ -125,10 +135,14 @@ export async function handleChat(req: IncomingMessage, res: ServerResponse) {
   } catch (err: unknown) {
     const errorMessage = err instanceof Error ? err.message : String(err);
     console.error('[Digital Dude Assistant API error]', errorMessage);
-    return sendJson(res, 500, {
-      ok: false,
-      error: 'Unable to process enquiry. Please contact Digital Dude directly.',
-      reply: "I don't have enough confirmed information right now. Please contact Digital Dude directly for exact details.",
+
+    // Fall back gracefully with 200 OK so the chat UI doesn't crash or display 500
+    return sendJson(res, 200, {
+      ok: true,
+      reply:
+        "I don't have enough confirmed information about that in my current Digital Dude knowledge base. Please contact Digital Dude directly for the exact details.",
+      retrievedChunks: [],
+      mode: 'rule_fallback',
     });
   }
 }
