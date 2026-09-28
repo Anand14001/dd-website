@@ -19,7 +19,6 @@ export const Navbar: React.FC = () => {
     { label: 'About Us', to: '/about' },
     { label: 'Services', to: '/services' },
     { label: 'Portfolio', to: '/portfolio' },
-    { label: 'Assistant', to: '/assistant', isAi: true },
     { label: 'Contact', to: '/contact' },
   ];
 
@@ -62,11 +61,6 @@ export const Navbar: React.FC = () => {
                 }
               >
                 <span>{link.label}</span>
-                {link.isAi && (
-                  <span className="text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded bg-lime/20 text-lime border border-lime/30">
-                    AI
-                  </span>
-                )}
               </NavLink>
             ))}
           </nav>
@@ -115,11 +109,6 @@ export const Navbar: React.FC = () => {
                   }
                 >
                   <span>{link.label}</span>
-                  {link.isAi && (
-                    <span className="text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded bg-lime/20 text-lime border border-lime/30">
-                      RAG AI
-                    </span>
-                  )}
                 </NavLink>
               ))}
             </div>

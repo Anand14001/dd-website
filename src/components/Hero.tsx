@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, CheckCircle2, ChevronRight } from 'lucide-react';
+import { ArrowRight, ChevronRight } from 'lucide-react';
 import { RotatingValue } from './RotatingValue';
 
 interface HeroProps {
@@ -70,22 +70,6 @@ export const Hero: React.FC<HeroProps> = ({ onOpenConsultation, onExploreSolutio
               <span>Explore Solutions</span>
               <ChevronRight className="w-4 h-4 text-white/50" />
             </button>
-          </div>
-
-          {/* Guarantee / trust indicators */}
-          <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-2 pt-5 border-t border-white/10 max-w-lg mx-auto">
-            <div className="flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4 text-lime shrink-0" />
-              <span className="text-xs font-medium text-white/60">Custom Architecture</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4 text-lime shrink-0" />
-              <span className="text-xs font-medium text-white/60">No Cookie-Cutter Fluff</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4 text-lime shrink-0" />
-              <span className="text-xs font-medium text-white/60">Measurable Sales Focus</span>
-            </div>
           </div>
         </div>
       </div>

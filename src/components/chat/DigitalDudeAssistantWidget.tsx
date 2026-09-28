@@ -6,7 +6,6 @@ import {
   Send,
   Sparkles,
   RotateCcw,
-  Maximize2,
   Copy,
   Check,
   Phone,
@@ -258,15 +257,6 @@ export const DigitalDudeAssistantWidget: React.FC = () => {
               >
                 <RotateCcw className="w-3.5 h-3.5" />
               </button>
-              <Link
-                to="/assistant"
-                title="Full Page View"
-                onClick={() => setIsOpen(false)}
-                className="p-1.5 rounded-lg text-white/40 hover:text-white hover:bg-white/5 transition-colors"
-                aria-label="Open full page assistant"
-              >
-                <Maximize2 className="w-3.5 h-3.5" />
-              </Link>
               <button
                 id="close-assistant-btn"
                 onClick={() => setIsOpen(false)}
@@ -463,14 +453,7 @@ export const DigitalDudeAssistantWidget: React.FC = () => {
             </div>
             <div className="flex items-center justify-between text-[10px] text-white/30 pt-1.5 px-0.5">
               <span>Press Enter to send</span>
-              <Link
-                to="/assistant"
-                onClick={() => setIsOpen(false)}
-                className="hover:text-lime transition-colors flex items-center gap-0.5"
-              >
-                <span>Full console</span>
-                <ExternalLink className="w-2.5 h-2.5" />
-              </Link>
+              <span>English &amp; Tanglish supported</span>
             </div>
           </div>
         </div>

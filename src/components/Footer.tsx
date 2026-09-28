@@ -69,12 +69,6 @@ export const Footer: React.FC = () => {
                 </Link>
               </li>
               <li>
-                <Link to="/assistant" className="hover:text-lime text-lime/90 font-medium transition-colors flex items-center gap-1.5">
-                  <span>Digital Dude Assistant</span>
-                  <span className="text-[9px] uppercase px-1 py-0.2 rounded bg-lime/20 text-lime font-bold">AI</span>
-                </Link>
-              </li>
-              <li>
                 <Link to="/#faq" className="hover:text-white transition-colors">
                   Frequently Asked Questions
                 </Link>
