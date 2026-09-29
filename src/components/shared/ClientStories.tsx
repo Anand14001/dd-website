@@ -31,13 +31,13 @@ export const ClientStories: React.FC = () => {
         </motion.div>
 
         <div className="mt-14 grid grid-cols-1 gap-5 lg:grid-cols-12">
-          {/* Satisfaction stat */}
+          {/* Client Ratings Card - Stylish Glassmorphism & Star Badge */}
           <motion.div
             initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-60px' }}
             transition={{ duration: 0.5 }}
-            className="group relative min-h-[22rem] overflow-hidden rounded-2xl border border-lime/25 lg:col-span-4"
+            className="group relative min-h-[24rem] overflow-hidden rounded-2xl border border-lime/30 bg-ink-soft shadow-[0_0_35px_rgba(191,255,0,0.08)] transition-all duration-500 hover:border-lime/60 hover:shadow-[0_0_45px_rgba(191,255,0,0.18)] lg:col-span-4 flex flex-col justify-end"
           >
             <img
               src={SATISFACTION_STAT.image}
@@ -46,18 +46,34 @@ export const ClientStories: React.FC = () => {
               className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
             />
 
-            {/* Scrim keeps the figures legible whatever the photo is doing underneath. */}
+            {/* Scrim keeps figures crisp and readable */}
             <div
               aria-hidden
-              className="absolute inset-0 bg-gradient-to-t from-ink via-ink/80 to-ink/30"
+              className="absolute inset-0 bg-gradient-to-t from-ink via-ink/85 to-ink/40"
             />
 
-            <div className="relative flex h-full flex-col justify-end p-8">
-              <span className="text-6xl font-bold tracking-[-0.03em] text-lime lg:text-7xl">
-                {SATISFACTION_STAT.value}
-              </span>
-              <span className="mt-3 text-lg font-bold text-white">{SATISFACTION_STAT.label}</span>
-              <p className="mt-3 text-sm leading-relaxed text-white/60">
+            {/* Bottom Content Plate */}
+            <div className="relative z-10 p-6 sm:p-8">
+              {/* Score and Scale */}
+              <div className="flex items-baseline gap-2">
+                <span className="text-6xl font-black tracking-tight text-lime drop-shadow-[0_0_24px_rgba(191,255,0,0.35)] lg:text-7xl">
+                  {SATISFACTION_STAT.value}
+                </span>
+                <span className="text-2xl font-bold text-white/50">/ 5.0</span>
+              </div>
+
+              {/* Glowing Stars Row */}
+              <div className="mt-3 flex items-center gap-1.5">
+                {[1, 2, 3, 4, 5].map((s) => (
+                  <Star
+                    key={s}
+                    className="h-5 w-5 fill-amber-400 text-amber-400 drop-shadow-[0_0_8px_rgba(251,191,36,0.65)]"
+                  />
+                ))}
+              </div>
+
+              {/* Detail text */}
+              <p className="mt-4 text-sm leading-relaxed text-white/75 font-normal">
                 {SATISFACTION_STAT.detail}
               </p>
             </div>

@@ -4,11 +4,25 @@ import { ArrowLeft, ArrowRight, ArrowUpRight } from 'lucide-react';
 import { PORTFOLIO_ITEMS } from '../../data/portfolioData';
 import { SectionHeading } from './SectionHeading';
 
-/** Live client builds lead the rail, since those can be clicked through. */
-const ITEMS = [
-  ...PORTFOLIO_ITEMS.filter((i) => i.link && i.category === 'Website & App Development'),
-  ...PORTFOLIO_ITEMS.filter((i) => i.link && i.category !== 'Website & App Development'),
-].slice(0, 10);
+/** Live client builds lead the rail, deduplicated by project title so no brand appears twice. */
+const ITEMS = (() => {
+  const candidates = [
+    ...PORTFOLIO_ITEMS.filter((i) => i.link && i.category === 'Website & App Development'),
+    ...PORTFOLIO_ITEMS.filter((i) => i.link && i.category !== 'Website & App Development'),
+  ];
+  const seenTitles = new Set<string>();
+  const uniqueItems: typeof PORTFOLIO_ITEMS = [];
+
+  for (const item of candidates) {
+    const key = item.title.trim().toLowerCase();
+    if (!seenTitles.has(key)) {
+      seenTitles.add(key);
+      uniqueItems.push(item);
+    }
+  }
+
+  return uniqueItems.slice(0, 10);
+})();
 
 export const WorkCarousel: React.FC = () => {
   const trackRef = useRef<HTMLDivElement>(null);

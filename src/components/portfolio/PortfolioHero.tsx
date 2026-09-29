@@ -12,7 +12,7 @@ export const PortfolioHero: React.FC = () => {
     { value: `${projectCount}`, label: 'Projects shown' },
     { value: `${categoryCount}`, label: 'Disciplines' },
     { value: `${liveSites}`, label: 'Live links' },
-    { value: '99%', label: 'Client satisfaction' },
+    { value: '4.9 ★', label: 'Client ratings' },
   ];
 
   return (

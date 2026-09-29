@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, NavLink } from 'react-router-dom';
-import { Menu, X, ArrowRight, ShieldCheck } from 'lucide-react';
+import { Menu, X, ArrowRight } from 'lucide-react';
 
 export const Navbar: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -113,7 +113,7 @@ export const Navbar: React.FC = () => {
               ))}
             </div>
 
-            <div className="pt-3 border-t border-white/10 flex flex-col gap-2.5">
+            <div className="pt-3 border-t border-white/10">
               <Link
                 id="mobile-nav-consultation-btn"
                 to="/contact"
@@ -123,10 +123,6 @@ export const Navbar: React.FC = () => {
                 <span>Get Started</span>
                 <ArrowRight className="w-4 h-4" />
               </Link>
-              <div className="flex items-center justify-center gap-2 text-xs text-white/50 py-1">
-                <ShieldCheck className="w-3.5 h-3.5 text-lime" />
-                <span>Response within 4 hours</span>
-              </div>
             </div>
           </div>
         )}

@@ -70,9 +70,10 @@ export const CLIENT_STORIES: ClientStory[] = [
 ];
 
 export const SATISFACTION_STAT = {
-  value: '99%',
-  label: 'Satisfied Clients',
-  detail: 'Our superior services have resulted in a 99% client satisfaction rate.',
+  value: '4.9',
+  label: 'Client Ratings',
+  detail:
+    'Our stellar client rating showcases the exceptional quality and satisfaction we deliver with every project.',
   image: 'https://digital-dude.com/wp-content/uploads/2025/01/7581110-e1738067131140.jpeg',
   imageAlt: 'Colleagues in a meeting against a city skyline',
 };

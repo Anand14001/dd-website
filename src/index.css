@@ -302,3 +302,124 @@ html {
     -webkit-text-stroke-width: 1px;
   }
 }
+
+/* ==========================================================================
+   Chatbot & Modern Sleek Scrollbars (Dark + Lime Palette)
+   ========================================================================== */
+
+/* Universal utility to hide scrollbars completely while keeping scrollability */
+.no-scrollbar::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none !important; /* IE and Edge */
+  scrollbar-width: none !important; /* Firefox */
+}
+
+/* Tailored slim scrollbar for chat message feed */
+.chat-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(191, 255, 0, 0.3) rgba(5, 5, 7, 0.4);
+}
+
+.chat-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.chat-scrollbar::-webkit-scrollbar-track {
+  background: rgba(5, 5, 7, 0.3);
+  border-radius: 9999px;
+  margin: 6px 0;
+}
+
+.chat-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(191, 255, 0, 0.28);
+  border-radius: 9999px;
+  border: 1px solid rgba(191, 255, 0, 0.15);
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.chat-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #bfff00;
+  box-shadow: 0 0 10px rgba(191, 255, 0, 0.5);
+}
+
+/* Ensure any nested scroll areas inside the assistant modal also stay on-brand */
+#digital-dude-assistant-modal *::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+#digital-dude-assistant-modal *::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+#digital-dude-assistant-modal *::-webkit-scrollbar-thumb {
+  background: rgba(191, 255, 0, 0.25);
+  border-radius: 9999px;
+}
+
+#digital-dude-assistant-modal *::-webkit-scrollbar-thumb:hover {
+  background: #bfff00;
+}
+
+#digital-dude-assistant-modal .no-scrollbar::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+/* ==========================================================================
+   Hero Shooting Stars & Cosmic Ambient Animation
+   ========================================================================== */
+@keyframes hero-shooting-star {
+  0% {
+    transform: translate(0, 0) rotate(var(--star-angle, 24deg));
+    opacity: 0;
+  }
+  3% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(135vw, 65vh) rotate(var(--star-angle, 24deg));
+    opacity: 0;
+  }
+}
+
+@keyframes hero-star-twinkle {
+  0%, 100% {
+    opacity: var(--star-base-opacity, 0.2);
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.6);
+  }
+}
+
+.hero-comet-particle {
+  animation: hero-shooting-star var(--star-duration, 10s) linear var(--star-delay, 0s) infinite;
+  will-change: transform, opacity;
+}
+
+.hero-twinkle-dot {
+  animation: hero-star-twinkle var(--twinkle-duration, 3s) ease-in-out var(--twinkle-delay, 0s) infinite;
+  will-change: opacity, transform;
+}
+
+/* 24-column grid utility for balanced 4 + 3 card layout on desktop */
+@media (min-width: 1024px) {
+  .lg\:grid-cols-24 {
+    grid-template-columns: repeat(24, minmax(0, 1fr)) !important;
+  }
+}
+
+
+

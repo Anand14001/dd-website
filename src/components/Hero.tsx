@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, ChevronRight } from 'lucide-react';
 import { RotatingValue } from './RotatingValue';
+import { ShootingStars } from './hero/ShootingStars';
 
 interface HeroProps {
   onOpenConsultation: () => void;
@@ -29,6 +30,9 @@ export const Hero: React.FC<HeroProps> = ({ onOpenConsultation, onExploreSolutio
         }}
       />
 
+      {/* Recreated Cosmic Shooting Stars & Twinkling Constellation Background */}
+      <ShootingStars />
+
       <div className="w-full max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 relative z-10">
         {/* Centered, full-bleed headline block */}
         <div className="max-w-4xl 2xl:max-w-5xl mx-auto text-center space-y-6">
@@ -42,12 +46,6 @@ export const Hero: React.FC<HeroProps> = ({ onOpenConsultation, onExploreSolutio
               At <strong className="text-white font-semibold">Digital Dude</strong>, we empower
               businesses to grow with the right blend of technology and marketing. We craft tailored
               digital solutions that <RotatingValue />.
-            </p>
-            <p className="text-sm text-white/50 leading-[1.6] border-l-2 border-lime/60 pl-3.5 py-0.5 text-left inline-block">
-              Our mission is simple which is to{' '}
-              <span className="text-lime/90 font-medium">
-                transform businesses with smart strategies and unlock their true growth potential.
-              </span>
             </p>
           </div>
 

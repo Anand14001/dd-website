@@ -268,17 +268,8 @@ export const DigitalDudeAssistantWidget: React.FC = () => {
             </div>
           </div>
 
-          {/* Grounding Notice */}
-          <div className="bg-lime/[0.04] px-3.5 py-2 border-b border-lime/15 flex items-center justify-between text-[11px] text-white/70">
-            <div className="flex items-center gap-1.5">
-              <Shield className="w-3.5 h-3.5 text-lime shrink-0" />
-              <span>Verified Digital Dude services &amp; team guide</span>
-            </div>
-            <span className="text-[10px] text-lime font-mono">English / Tanglish</span>
-          </div>
-
           {/* Messages Area */}
-          <div className="flex-1 p-4 overflow-y-auto space-y-4 text-xs font-[var(--font-body)]">
+          <div className="flex-1 p-4 overflow-y-auto chat-scrollbar space-y-4 text-xs font-[var(--font-body)]">
             {messages.map((msg) => {
               const isUser = msg.role === 'user';
               return (

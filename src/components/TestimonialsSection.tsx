@@ -1,12 +1,57 @@
 import React from 'react';
-import { Star, ShieldCheck } from 'lucide-react';
+import { Star } from 'lucide-react';
 import { TESTIMONIALS } from '../data/agencyData';
 import { SectionHeading } from './home/SectionHeading';
 
+/** Deterministic star positions — seeded generator keeps positions stable across renders. */
+const TESTIMONIAL_STARS = (() => {
+  let seed = 20260929;
+  const rand = () => {
+    seed = (seed * 1664525 + 1013904223) % 4294967296;
+    return seed / 4294967296;
+  };
+  return Array.from({ length: 58 }, () => ({
+    top: `${(rand() * 100).toFixed(2)}%`,
+    left: `${(rand() * 100).toFixed(2)}%`,
+    size: rand() < 0.78 ? 1.5 : 2.5,
+    delay: `${(rand() * 3.2).toFixed(2)}s`,
+    lime: rand() < 0.2,
+  }));
+})();
+
 export const TestimonialsSection: React.FC = () => {
   return (
-    <section id="testimonials" className="py-24 lg:py-32 bg-ink relative border-t border-white/10">
-      <div className="w-full max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16">
+    <section id="testimonials" className="py-24 lg:py-32 bg-ink relative border-t border-white/10 overflow-hidden">
+      {/* Ambient cosmic nebula glow */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-lime/[0.04] blur-[150px] rounded-full"
+      />
+
+      {/* Starfield matching Why Digital Dude section */}
+      <div aria-hidden className="pointer-events-none absolute inset-0">
+        {TESTIMONIAL_STARS.map((star, i) => (
+          <span
+            key={i}
+            className="dd-star absolute rounded-full"
+            style={{
+              top: star.top,
+              left: star.left,
+              width: star.size,
+              height: star.size,
+              background: star.lime ? '#BFFF00' : '#FFFFFF',
+              boxShadow: star.lime
+                ? '0 0 6px rgba(191,255,0,0.6)'
+                : star.size > 2
+                ? '0 0 5px rgba(255,255,255,0.7)'
+                : 'none',
+              animationDelay: star.delay,
+            }}
+          />
+        ))}
+      </div>
+
+      <div className="w-full max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 relative z-10">
         {/* Header */}
         <SectionHeading
           eyebrow="Client Reviews"

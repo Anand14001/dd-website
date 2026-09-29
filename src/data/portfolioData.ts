@@ -93,13 +93,6 @@ export const PORTFOLIO_ITEMS: PortfolioItem[] = [
 
   // Logo
   {
-    id: 'logo-digital-dude',
-    title: 'Digital Dude',
-    category: 'Logo',
-    image: 'https://digital-dude.com/wp-content/uploads/2025/02/DD-icon-with-tag-black-jpg.jpg',
-    link: 'https://digital-dude.com/portfolio/dd-icon-with-tag-black-jpg/',
-  },
-  {
     id: 'logo-hostaloj',
     title: 'Hostaloj',
     category: 'Logo',

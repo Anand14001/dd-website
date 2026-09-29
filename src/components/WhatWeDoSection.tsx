@@ -79,16 +79,29 @@ export const WhatWeDoSection: React.FC = () => {
           intro="Every business has unique growth bottlenecks. We craft custom-engineered solutions combining modern development, algorithmic marketing, and sales automation."
         />
 
-        {/* Flip Card Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 2xl:gap-10">
+        {/* Flip Card Grid: 4 cards on Row 1, 3 centered cards on Row 2 on desktop */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-24 gap-6 lg:gap-8 2xl:gap-10">
           {SERVICES.map((service, idx) => {
             const Icon = getIcon(service.iconName);
             const isFlippedOnMobile = flippedCardId === service.id;
 
+            // 4 cards on 1st row (span 6 each = 24 cols).
+            // 3 cards on 2nd row: 1st starts at col 4 (3 cols empty on left, 3 on right = centered).
+            const desktopGridClass =
+              idx < 4
+                ? 'lg:col-span-6'
+                : idx === 4
+                ? 'lg:col-span-6 lg:col-start-4'
+                : 'lg:col-span-6';
+
+            // On tablet 2-col grid, center the 7th lone card cleanly
+            const tabletGridClass =
+              idx === 6 ? 'sm:col-span-2 sm:max-w-md sm:mx-auto sm:w-full lg:max-w-none' : '';
+
             return (
               <div
                 key={service.id}
-                className="transition-all duration-700 ease-out"
+                className={`transition-all duration-700 ease-out ${desktopGridClass} ${tabletGridClass}`}
                 style={{
                   opacity: visible ? 1 : 0,
                   transform: visible ? 'translateY(0)' : 'translateY(28px)',
