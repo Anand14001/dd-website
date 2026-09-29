@@ -59,6 +59,9 @@ async function readJson(req: IncomingMessage): Promise<Record<string, unknown>> 
 function sendJson(res: ServerResponse, status: number, body: unknown) {
   res.statusCode = status;
   res.setHeader('Content-Type', 'application/json');
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
   res.end(JSON.stringify(body));
 }
 
@@ -169,6 +172,17 @@ export async function apiMiddleware(
   next: () => void,
 ): Promise<void> {
   const url = (req.url ?? '').split('?')[0];
+
+  if (req.method === 'OPTIONS') {
+    if (url.startsWith('/api/')) {
+      res.statusCode = 204;
+      res.setHeader('Access-Control-Allow-Origin', '*');
+      res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+      res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
+      res.end();
+      return;
+    }
+  }
 
   if (req.method === 'POST') {
     if (url === '/api/contact') return handleContact(req, res);
