@@ -1,6 +1,6 @@
 import { GoogleGenAI } from '@google/genai';
-import { retrieveKnowledgeChunks, KnowledgeChunk } from './knowledgeBase';
-import { DIGITAL_DUDE_SYSTEM_PROMPT } from './systemPrompt';
+import { retrieveKnowledgeChunks, KnowledgeChunk } from './knowledgeBase.js';
+import { DIGITAL_DUDE_SYSTEM_PROMPT } from './systemPrompt.js';
 
 export interface ChatMessage {
   role: 'user' | 'assistant';

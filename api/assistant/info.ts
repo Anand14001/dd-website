@@ -1,4 +1,4 @@
-import { KNOWLEDGE_CHUNKS } from '../_lib/knowledgeBase';
+import { KNOWLEDGE_CHUNKS } from '../_lib/knowledgeBase.js';
 
 export const config = {
   maxDuration: 30,

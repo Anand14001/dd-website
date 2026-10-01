@@ -1,4 +1,4 @@
-import { answerCustomerQuery, type ChatMessage } from './_lib/chatbotEngine';
+import { answerCustomerQuery, type ChatMessage } from './_lib/chatbotEngine.js';
 
 export const config = {
   maxDuration: 30,
