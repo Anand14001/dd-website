@@ -1,164 +1,140 @@
+/**
+ * POST /api/chat
+ *
+ * Answers the visitor and records the conversation. The reply is computed and
+ * returned first; persistence, lead extraction and the WhatsApp alert run after
+ * the response so none of them sit in the visitor's latency path.
+ *
+ * A database or notification failure must never change what the visitor sees.
+ */
 import { answerCustomerQuery, type ChatMessage } from './_lib/chatbotEngine.js';
+import { afterResponse, fail, ok, preflight, send, toApiRequest, type ApiRequest } from './_lib/http.js';
+import { ensureConversation, recordMessage, syncLeadFromConversation } from './_lib/repository.js';
+import { shouldRequestContact, type ChatTurn } from './_lib/leadIntelligence.js';
+import { notifyNewLead } from './_lib/whatsapp.js';
 
 export const config = {
   maxDuration: 30,
 };
 
-const CORS_HEADERS: Record<string, string> = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Requested-With',
-};
+const FALLBACK_REPLY =
+  "I don't have enough confirmed information about that in my current Digital Dude knowledge base. " +
+  'Please contact Digital Dude directly for the exact details.';
 
-async function parseBody(req: any): Promise<any> {
-  if (typeof req.json === 'function') {
-    try {
-      return await req.json();
-    } catch {
-      return {};
-    }
-  }
-  if (req.body !== undefined && req.body !== null) {
-    if (typeof req.body === 'object') return req.body;
-    if (typeof req.body === 'string') {
-      try {
-        return JSON.parse(req.body);
-      } catch {
-        return {};
-      }
-    }
-  }
-  if (typeof req.on === 'function') {
-    return new Promise((resolve) => {
-      const chunks: Buffer[] = [];
-      let finished = false;
-      const finish = () => {
-        if (finished) return;
-        finished = true;
-        try {
-          if (chunks.length > 0) {
-            const raw = Buffer.concat(chunks).toString('utf8');
-            resolve(JSON.parse(raw));
-          } else {
-            resolve({});
-          }
-        } catch {
-          resolve({});
-        }
-      };
-      const timeout = setTimeout(finish, 2000);
-      req.on('data', (chunk: any) => {
-        chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
-      });
-      req.on('end', () => {
-        clearTimeout(timeout);
-        finish();
-      });
-      req.on('error', () => {
-        clearTimeout(timeout);
-        finish();
-      });
-    });
-  }
-  return {};
+/** Attribution details the widget sends alongside the first message. */
+function conversationContext(request: ApiRequest) {
+  const context = (request.body.context ?? {}) as Record<string, unknown>;
+  const asString = (value: unknown) =>
+    typeof value === 'string' && value.trim() ? value.trim().slice(0, 500) : undefined;
+
+  return {
+    landingPage: asString(context.landingPage),
+    referrer: asString(context.referrer),
+    utmSource: asString(context.utmSource),
+    utmMedium: asString(context.utmMedium),
+    utmCampaign: asString(context.utmCampaign),
+    userAgent: request.headers['user-agent']?.slice(0, 500),
+    ip: request.ip,
+  };
 }
 
-function sendResponse(res: any, status: number, data: unknown) {
-  if (typeof res.status === 'function' && typeof res.json === 'function') {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
-    return res.status(status).json(data);
-  }
-  if (typeof res.setHeader === 'function' && typeof res.end === 'function') {
-    res.statusCode = status;
-    res.setHeader('Content-Type', 'application/json');
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
-    return res.end(JSON.stringify(data));
+/**
+ * Stores both sides of the exchange, re-derives the lead from the full stored
+ * transcript, and alerts the team if it is worth chasing.
+ */
+async function persistExchange(params: {
+  sessionId: string;
+  request: ApiRequest;
+  userMessage: string;
+  reply: string;
+  mode: string;
+  retrievedChunks: unknown[];
+  latencyMs: number;
+}): Promise<void> {
+  const conversationId = await ensureConversation(params.sessionId, conversationContext(params.request));
+  if (!conversationId) return;
+
+  await recordMessage({
+    conversationId,
+    role: 'user',
+    content: params.userMessage,
+  });
+
+  await recordMessage({
+    conversationId,
+    role: 'assistant',
+    content: params.reply,
+    mode: params.mode,
+    retrievedChunks: params.retrievedChunks,
+    latencyMs: params.latencyMs,
+  });
+
+  const result = await syncLeadFromConversation(conversationId);
+  if (result?.isNew) {
+    await notifyNewLead(result.lead);
   }
 }
 
 export default async function handler(req: any, res?: any) {
-  const method = req.method || 'GET';
+  const request = await toApiRequest(req);
 
-  // Handle CORS preflight
-  if (method === 'OPTIONS') {
-    if (res) {
-      res.setHeader('Access-Control-Allow-Origin', '*');
-      res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-      res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
-      if (typeof res.status === 'function') return res.status(204).end();
-      res.statusCode = 204;
-      return res.end();
-    }
-    return new Response(null, { status: 204, headers: CORS_HEADERS });
+  if (request.method === 'OPTIONS') return preflight(res);
+  if (request.method !== 'POST') return send(fail(405, 'Method Not Allowed'), res);
+
+  const userMessage = String(request.body.message || request.body.prompt || '').trim();
+  if (!userMessage) {
+    return send(fail(400, 'Question or message is required.'), res);
   }
 
-  if (method !== 'POST') {
-    const errorPayload = { ok: false, error: 'Method Not Allowed' };
-    if (res) {
-      return sendResponse(res, 405, errorPayload);
-    }
-    return new Response(JSON.stringify(errorPayload), {
-      status: 405,
-      headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
-    });
-  }
+  const history: ChatMessage[] = Array.isArray(request.body.history) ? request.body.history : [];
+  const sessionId = typeof request.body.sessionId === 'string' ? request.body.sessionId.slice(0, 64) : '';
 
+  let reply = FALLBACK_REPLY;
+  let mode = 'rule_fallback';
+  let retrievedChunks: unknown[] = [];
+
+  const startedAt = Date.now();
   try {
-    const body = await parseBody(req);
-    const query = (body.message || body.prompt || '').trim();
-
-    if (!query) {
-      const errPayload = { ok: false, error: 'Question or message is required.' };
-      if (res) {
-        return sendResponse(res, 400, errPayload);
-      }
-      return new Response(JSON.stringify(errPayload), {
-        status: 400,
-        headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
-      });
-    }
-
-    const history: ChatMessage[] = Array.isArray(body.history) ? body.history : [];
-    const result = await answerCustomerQuery(query, history);
-
-    const payload = {
-      ok: true,
-      reply: result.reply,
-      retrievedChunks: result.retrievedChunks,
-      mode: result.mode,
-    };
-
-    if (res) {
-      return sendResponse(res, 200, payload);
-    }
-    return new Response(JSON.stringify(payload), {
-      status: 200,
-      headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
-    });
-  } catch (err: unknown) {
-    const errorMessage = err instanceof Error ? err.message : String(err);
-    console.error('[Digital Dude Assistant API error]', errorMessage);
-
-    const fallbackPayload = {
-      ok: true,
-      reply:
-        "I don't have enough confirmed information about that in my current Digital Dude knowledge base. Please contact Digital Dude directly for the exact details.",
-      retrievedChunks: [],
-      mode: 'rule_fallback',
-    };
-
-    if (res) {
-      return sendResponse(res, 200, fallbackPayload);
-    }
-    return new Response(JSON.stringify(fallbackPayload), {
-      status: 200,
-      headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
-    });
+    const result = await answerCustomerQuery(userMessage, history);
+    reply = result.reply;
+    mode = result.mode;
+    retrievedChunks = result.retrievedChunks;
+  } catch (err) {
+    // The widget still gets a usable answer; only the mode tells us it degraded.
+    console.error('[chat] engine failed', err instanceof Error ? err.message : err);
   }
+  const latencyMs = Date.now() - startedAt;
+
+  // Whether the widget should now ask for contact details, based on the full
+  // exchange including the message we just received.
+  const turns: ChatTurn[] = [
+    ...history.map((m) => ({ role: m.role, content: m.content })),
+    { role: 'user' as const, content: userMessage },
+  ];
+
+  if (sessionId) {
+    await afterResponse(
+      persistExchange({
+        sessionId,
+        request,
+        userMessage,
+        reply,
+        mode,
+        retrievedChunks,
+        latencyMs,
+      }),
+    );
+  }
+
+  return send(
+    ok({
+      reply,
+      retrievedChunks,
+      mode,
+      requestContact: shouldRequestContact(turns),
+    }),
+    res,
+  );
 }
 
 export async function OPTIONS(req?: any, res?: any) {

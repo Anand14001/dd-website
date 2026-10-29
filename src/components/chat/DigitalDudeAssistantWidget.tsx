@@ -17,6 +17,48 @@ import {
   ChevronUp,
 } from 'lucide-react';
 import { MarkdownContent } from './MarkdownContent';
+import { LeadCaptureCard, type LeadCapturePayload } from './LeadCaptureCard';
+
+const SESSION_STORAGE_KEY = 'dd_chat_session';
+
+/**
+ * Stable id for this visitor's conversation, so the server can thread messages
+ * together and the dashboard shows one transcript instead of loose fragments.
+ * Stored in localStorage rather than sessionStorage so someone who comes back
+ * later lands on the same lead record instead of creating a duplicate.
+ */
+function getSessionId(): string {
+  try {
+    const existing = localStorage.getItem(SESSION_STORAGE_KEY);
+    if (existing) return existing;
+    const created =
+      typeof crypto !== 'undefined' && 'randomUUID' in crypto
+        ? crypto.randomUUID()
+        : `s-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+    localStorage.setItem(SESSION_STORAGE_KEY, created);
+    return created;
+  } catch {
+    // Private browsing or blocked storage: fall back to a per-load id so the
+    // conversation is still recorded, just not linked across visits.
+    return `s-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+  }
+}
+
+/** Campaign attribution, read once so a lead can be traced back to its source. */
+function getAttribution() {
+  try {
+    const params = new URLSearchParams(window.location.search);
+    return {
+      landingPage: window.location.pathname,
+      referrer: document.referrer || undefined,
+      utmSource: params.get('utm_source') || undefined,
+      utmMedium: params.get('utm_medium') || undefined,
+      utmCampaign: params.get('utm_campaign') || undefined,
+    };
+  } catch {
+    return {};
+  }
+}
 
 export interface ChatMessage {
   id: string;
@@ -56,6 +98,13 @@ export const DigitalDudeAssistantWidget: React.FC = () => {
   const [messages, setMessages] = useState<ChatMessage[]>([initialMessage]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // The capture card appears when the server says intent is high enough, and
+  // only once per visit — asking twice reads as nagging.
+  const [showCaptureCard, setShowCaptureCard] = useState(false);
+  const [captureHandled, setCaptureHandled] = useState(false);
+  const sessionIdRef = useRef<string>('');
+  if (!sessionIdRef.current) sessionIdRef.current = getSessionId();
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -100,10 +149,16 @@ export const DigitalDudeAssistantWidget: React.FC = () => {
         body: JSON.stringify({
           message: text,
           history: historyPayload,
+          sessionId: sessionIdRef.current,
+          context: getAttribution(),
         }),
       });
 
       const data = await res.json();
+
+      if (data?.requestContact && !captureHandled) {
+        setShowCaptureCard(true);
+      }
 
       if (data && data.reply) {
         const assistantMsg: ChatMessage = {
@@ -147,6 +202,26 @@ export const DigitalDudeAssistantWidget: React.FC = () => {
 
   const handleReset = () => {
     setMessages([initialMessage]);
+    setShowCaptureCard(false);
+  };
+
+  /** Sends the capture card to the server. Throws so the card can show an error. */
+  const handleCaptureSubmit = async (payload: LeadCapturePayload) => {
+    const res = await fetch('/api/leads', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        ...payload,
+        sessionId: sessionIdRef.current,
+        message: messages
+          .filter((m) => m.role === 'user')
+          .map((m) => m.content)
+          .join('\n')
+          .slice(0, 1000),
+      }),
+    });
+    if (!res.ok) throw new Error('Lead submission failed');
+    setCaptureHandled(true);
   };
 
   // Helper to format assistant markdown text (bold, lists, linebreaks)
@@ -400,6 +475,17 @@ export const DigitalDudeAssistantWidget: React.FC = () => {
                 </div>
               </div>
             )}
+
+            {showCaptureCard && !isLoading && (
+              <LeadCaptureCard
+                onSubmit={handleCaptureSubmit}
+                onDismiss={() => {
+                  setShowCaptureCard(false);
+                  setCaptureHandled(true);
+                }}
+              />
+            )}
+
             <div ref={messagesEndRef} />
           </div>
 

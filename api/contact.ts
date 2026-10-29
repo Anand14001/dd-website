@@ -1,157 +1,83 @@
+/**
+ * POST /api/contact
+ *
+ * Contact-form enquiries. These used to be written to the console only, which
+ * meant every submission was lost once the log window rolled over. They now land
+ * in the same leads table as chatbot enquiries so one pipeline covers both.
+ */
+import { fail, ok, preflight, send, toApiRequest } from './_lib/http.js';
+import { detectServices, extractLead, normalisePhone, type ProvidedLeadFields } from './_lib/leadIntelligence.js';
+import { upsertLead } from './_lib/repository.js';
+import { leadRowFromExtracted, notifyNewLead } from './_lib/whatsapp.js';
+
 export const config = {
   maxDuration: 30,
 };
 
-const CORS_HEADERS: Record<string, string> = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Requested-With',
-};
-
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-async function parseBody(req: any): Promise<any> {
-  if (typeof req.json === 'function') {
-    try {
-      return await req.json();
-    } catch {
-      return {};
-    }
-  }
-  if (req.body !== undefined && req.body !== null) {
-    if (typeof req.body === 'object') return req.body;
-    if (typeof req.body === 'string') {
-      try {
-        return JSON.parse(req.body);
-      } catch {
-        return {};
-      }
-    }
-  }
-  if (typeof req.on === 'function') {
-    return new Promise((resolve) => {
-      const chunks: Buffer[] = [];
-      let finished = false;
-      const finish = () => {
-        if (finished) return;
-        finished = true;
-        try {
-          if (chunks.length > 0) {
-            const raw = Buffer.concat(chunks).toString('utf8');
-            resolve(JSON.parse(raw));
-          } else {
-            resolve({});
-          }
-        } catch {
-          resolve({});
-        }
-      };
-      const timeout = setTimeout(finish, 2000);
-      req.on('data', (chunk: any) => {
-        chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
-      });
-      req.on('end', () => {
-        clearTimeout(timeout);
-        finish();
-      });
-      req.on('error', () => {
-        clearTimeout(timeout);
-        finish();
-      });
-    });
-  }
-  return {};
-}
-
-function sendResponse(res: any, status: number, data: unknown) {
-  if (typeof res.status === 'function' && typeof res.json === 'function') {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
-    return res.status(status).json(data);
-  }
-  if (typeof res.setHeader === 'function' && typeof res.end === 'function') {
-    res.statusCode = status;
-    res.setHeader('Content-Type', 'application/json');
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
-    return res.end(JSON.stringify(data));
-  }
-}
-
 export default async function handler(req: any, res?: any) {
-  const method = req.method || 'GET';
+  const request = await toApiRequest(req);
 
-  if (method === 'OPTIONS') {
-    if (res) {
-      res.setHeader('Access-Control-Allow-Origin', '*');
-      res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-      res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
-      if (typeof res.status === 'function') return res.status(204).end();
-      res.statusCode = 204;
-      return res.end();
-    }
-    return new Response(null, { status: 204, headers: CORS_HEADERS });
+  if (request.method === 'OPTIONS') return preflight(res);
+  if (request.method !== 'POST') return send(fail(405, 'Method Not Allowed'), res);
+
+  const body = request.body;
+  const name = typeof body.name === 'string' ? body.name.trim() : '';
+  const email = typeof body.email === 'string' ? body.email.trim().toLowerCase() : '';
+  const message = typeof body.message === 'string' ? body.message.trim() : '';
+  const phoneRaw = typeof body.phone === 'string' ? body.phone.trim() : '';
+  const company = typeof body.company === 'string' ? body.company.trim() : '';
+
+  const errors: Record<string, string> = {};
+  if (!name) errors.name = 'Name is required.';
+  if (!email) errors.email = 'Email is required.';
+  else if (!EMAIL_RE.test(email)) errors.email = 'That email address looks wrong.';
+  if (!message) errors.message = 'Tell us a little about the project.';
+
+  if (Object.keys(errors).length > 0) {
+    return send({ status: 400, json: { ok: false, errors } }, res);
   }
 
-  if (method !== 'POST') {
-    const errorPayload = { ok: false, error: 'Method Not Allowed' };
-    if (res) {
-      return sendResponse(res, 405, errorPayload);
-    }
-    return new Response(JSON.stringify(errorPayload), {
-      status: 405,
-      headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
-    });
-  }
+  // The form sends service titles, not catalog ids, so match them as keywords.
+  const selectedTitles: string[] = Array.isArray(body.services)
+    ? body.services.filter((s: unknown) => typeof s === 'string')
+    : [];
+
+  const provided: ProvidedLeadFields = {
+    name,
+    email,
+    phone: phoneRaw ? normalisePhone(phoneRaw) : undefined,
+    company: company || undefined,
+    services: detectServices([...selectedTitles, message].join(' ')),
+  };
+
+  // Scoring reads the enquiry text, so a form that mentions budget or a deadline
+  // scores the same way an equivalent chat message would.
+  const extracted = extractLead([{ role: 'user', content: message }], provided);
+  extracted.summary = selectedTitles.length > 0
+    ? `${selectedTitles.join(', ')} — ${message.slice(0, 200)}`
+    : message.slice(0, 240);
 
   try {
-    const body = await parseBody(req);
-
-    const errors: Record<string, string> = {};
-    if (!body.name?.trim()) errors.name = 'Name is required.';
-    if (!body.email?.trim()) errors.email = 'Email is required.';
-    else if (!EMAIL_RE.test(body.email.trim())) errors.email = 'That email address looks wrong.';
-    if (!body.message?.trim()) errors.message = 'Tell us a little about the project.';
-
-    if (Object.keys(errors).length > 0) {
-      const errPayload = { ok: false, errors };
-      if (res) {
-        return sendResponse(res, 400, errPayload);
-      }
-      return new Response(JSON.stringify(errPayload), {
-        status: 400,
-        headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
-      });
-    }
-
-    console.log('[contact] new enquiry', {
-      name: body.name.trim(),
-      email: body.email.trim(),
-      phone: body.phone?.trim() || undefined,
-      company: body.company?.trim() || undefined,
-      services: Array.isArray(body.services) ? body.services : [],
-      message: body.message.trim(),
-      receivedAt: new Date().toISOString(),
+    const result = await upsertLead({
+      conversationId: null,
+      source: 'contact_form',
+      extracted,
+      consent: true,
     });
 
-    if (res) {
-      return sendResponse(res, 200, { ok: true });
+    if (result) {
+      if (result.isNew) await notifyNewLead(result.lead);
+      return send(ok({ stored: true }), res);
     }
-    return new Response(JSON.stringify({ ok: true }), {
-      status: 200,
-      headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
-    });
-  } catch (err: unknown) {
-    console.error('[Contact API error]', err);
-    if (res) {
-      return sendResponse(res, 500, { ok: false, error: 'Internal server error' });
-    }
-    return new Response(JSON.stringify({ ok: false, error: 'Internal server error' }), {
-      status: 500,
-      headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
-    });
+
+    console.error('[contact] could not persist enquiry, alerting only', { name, email });
+    await notifyNewLead(leadRowFromExtracted(extracted, 'contact_form'));
+    return send(ok({ stored: false }), res);
+  } catch (err) {
+    console.error('[contact] unexpected failure', err instanceof Error ? err.message : err);
+    return send(ok({ stored: false }), res);
   }
 }
 

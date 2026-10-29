@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+
+# The admin dashboard holds customer contact details and chat transcripts.
+# It is password protected, but keep it out of search results as well.
+Disallow: /admin

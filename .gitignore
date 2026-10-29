@@ -6,3 +6,6 @@ coverage/
 *.log
 .env*
 !.env.example
+
+# Local PGlite development database (dev server only)
+.pglite/
