@@ -59,6 +59,16 @@ export const Footer: React.FC = () => {
                 </Link>
               </li>
               <li>
+                <Link to="/events" className="hover:text-white transition-colors">
+                  Event Technology &amp; Solutions
+                </Link>
+              </li>
+              <li>
+                <Link to="/events#event-projects" className="hover:text-white transition-colors">
+                  Selected Event Projects
+                </Link>
+              </li>
+              <li>
                 <Link to="/about#process" className="hover:text-white transition-colors">
                   The 4-Step Methodology
                 </Link>
