@@ -66,7 +66,7 @@ export const EventProjectModal: React.FC<EventProjectModalProps> = ({ project, o
 
   return (
     <div
-      className="fixed inset-0 z-[60] flex items-start justify-center overflow-y-auto p-4 sm:items-center sm:p-6"
+      className="fixed inset-0 z-[60] flex items-center justify-center p-3 sm:p-6"
       role="dialog"
       aria-modal="true"
       aria-labelledby="event-modal-title"
@@ -77,9 +77,12 @@ export const EventProjectModal: React.FC<EventProjectModalProps> = ({ project, o
         aria-hidden
       />
 
-      <div className="relative z-10 my-8 w-full max-w-3xl overflow-hidden rounded-2xl border border-white/10 bg-ink-soft shadow-2xl sm:my-0">
+      {/* The panel never grows past the viewport: the header stays put and the
+          body scrolls inside it, so the top and bottom are always reachable on
+          short screens (laptops in particular). */}
+      <div className="relative z-10 flex max-h-[calc(100dvh-1.5rem)] w-full max-w-3xl flex-col overflow-hidden rounded-2xl border border-white/10 bg-ink-soft shadow-2xl sm:max-h-[calc(100dvh-3rem)]">
         {/* Header visual */}
-        <div className="relative aspect-[16/7] overflow-hidden border-b border-white/[0.07]">
+        <div className="relative aspect-[16/7] max-h-[38vh] shrink-0 overflow-hidden border-b border-white/[0.07]">
           <EventVisual project={project} />
           <div
             aria-hidden
@@ -107,7 +110,7 @@ export const EventProjectModal: React.FC<EventProjectModalProps> = ({ project, o
           </div>
         </div>
 
-        <div className="p-6 sm:p-8">
+        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain p-5 sm:p-8">
           {/* Verified facts */}
           {facts.length > 0 && (
             <dl

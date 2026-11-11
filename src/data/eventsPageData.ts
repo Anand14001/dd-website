@@ -31,7 +31,15 @@ export type EventScope =
   | 'Event marketing'
   | 'Event-day support'
   | 'Post-event reporting'
-  | 'Platform hosting';
+  | 'Platform hosting'
+  | 'Event organising'
+  | 'Event branding'
+  | 'Influencer marketing'
+  | 'Ticketing'
+  | 'Venue selection'
+  | 'Hospitality'
+  | 'Crowd management'
+  | 'Media coverage';
 
 export interface EventProject {
   id: string;
@@ -81,6 +89,93 @@ export interface EventProject {
  */
 export const EVENT_PROJECTS: EventProject[] = [
   {
+    id: 'timeless-bonds',
+    name: 'Timeless Bonds Reunion',
+    summary:
+      'An alumni reunion for GRD SCIB in Coimbatore, with a scheduled event page and an online attendee registration journey.',
+    status: 'completed',
+    dateLabel: '4 January 2025',
+    city: 'Coimbatore',
+    venue: 'GRD SCIB, Coimbatore',
+    organiser: 'GRD SCIB',
+    scope: ['Event website', 'Registration flow', 'Platform hosting'],
+    url: 'https://timelessbonds.eventsinfinite.com/',
+    linkLabel: 'View event page',
+    accent: '#F472B6',
+    monogram: 'TB',
+    image: '/events/timeless-bonds.webp',
+    detail: [
+      'An alumni reunion hosted by GRD SCIB in Coimbatore on 4 January 2025.',
+      'The event page published a timed schedule across three locations — a meet and greet and campus visit at GRD SCIB, then a get-together lunch at a restaurant in Coimbatore.',
+      'Attendees signed up through an online registration journey linked from the event page, with named course contacts listed for queries.',
+      'Delivered on the Events Infinite platform as a hosted event page.',
+    ],
+    verify: [
+      'Registration ran through a linked sign-up journey rather than on-page ticketing. Keep the scope chips limited to what was actually built.',
+      'Request approved reunion photos to replace the generated visual.',
+    ],
+  },
+  {
+    id: 'germany-career-summit',
+    name: 'Germany Career Summit',
+    summary:
+      'A career summit for engineers held at MMA Hall, Chennai, with its event website and attendee sign-up journey online.',
+    status: 'completed',
+    city: 'Chennai',
+    venue: 'MMA Hall, Chennai',
+    organiser: 'B2 Consultants',
+    scope: [
+      'Event organising',
+      'Registration flow',
+      'Event branding',
+      'Influencer marketing',
+      'Ticketing',
+      'Venue selection',
+      'Hospitality',
+      'Crowd management',
+      'Media coverage',
+    ],
+    url: 'http://germanycareersummit.com/',
+    linkLabel: 'Visit event website',
+    accent: '#BFFF00',
+    monogram: 'GCS',
+    // The shared domain now serves the 2027 edition, so this card shows the
+    // summit's speaker section rather than a hero stamped with a future date.
+    image: '/events/germany-career-summit.webp',
+    detail: [
+      'The summit ran with its event website as the main public touchpoint for the programme and attendee sign-ups.',
+      'The same domain now carries the 2027 edition, which is listed separately as upcoming.',
+    ],
+    verify: [
+      'Confirm the edition date for the completed MMA Hall event and add it to the card.',
+      'The card currently shows a section of the shared website, because that domain now serves the 2027 edition. An approved photo from the MMA Hall event would be a stronger visual — request one.',
+      'The screenshot shows the summit speaker. Confirm B2 Consultants are happy for it to appear in the Digital Dude portfolio.',
+    ],
+  },
+  {
+    id: 'visible-with-ambika',
+    name: 'Visible with Ambika',
+    summary: 'A Chennai programme with its event website and public announcement page delivered online.',
+    status: 'completed',
+    dateLabel: '30 August 2026',
+    city: 'Chennai',
+    scope: ['Event website', 'Landing page'],
+    url: 'https://visiblewithambika.com/',
+    linkLabel: 'Visit event website',
+    accent: '#FB923C',
+    monogram: 'VWA',
+    image: '/events/visible-with-ambika.webp',
+    detail: [
+      'The event ran in Chennai on 30 August 2026 on its own dedicated domain.',
+      'The site carried the event identity and its public-facing detail for attendees.',
+    ],
+    verify: [
+      'Write the one-line event description with the organiser and confirm the exact scope Digital Dude delivered before publishing.',
+      'The live site carries "Get your ticket", "Pricing" and "Venue" sections, so ticketing may belong in the scope chips. Confirm with the organiser, then add the chips if it does.',
+      'The screenshot shows the client in her own site\'s hero image. Confirm she is happy for that screenshot to appear in the Digital Dude portfolio.',
+    ],
+  },
+  {
     id: 'salem-star-speaker',
     name: 'Salem Star Speaker',
     summary:
@@ -128,84 +223,6 @@ export const EVENT_PROJECTS: EventProject[] = [
       'The live site shows 2026 in its header and footer but 2027 in its main heading and dates. Ask the organiser which is correct and fix the site before this card goes live.',
       'Confirm B2 Consultants approve a public mention of the upcoming edition on the Digital Dude site.',
       'Confirm the exact scope Digital Dude delivers for the 2027 edition.',
-    ],
-  },
-  {
-    id: 'germany-career-summit',
-    name: 'Germany Career Summit',
-    summary:
-      'A career summit for engineers held at MMA Hall, Chennai, with its event website and attendee sign-up journey online.',
-    status: 'completed',
-    city: 'Chennai',
-    venue: 'MMA Hall, Chennai',
-    organiser: 'B2 Consultants',
-    scope: ['Event website', 'Landing page', 'Registration flow'],
-    url: 'http://germanycareersummit.com/',
-    linkLabel: 'Visit event website',
-    accent: '#BFFF00',
-    monogram: 'GCS',
-    // The shared domain now serves the 2027 edition, so this card shows the
-    // summit's speaker section rather than a hero stamped with a future date.
-    image: '/events/germany-career-summit.webp',
-    detail: [
-      'Held at MMA Hall in Chennai — a useful reference point for organisers planning an event at the same venue.',
-      'The summit ran with its event website as the main public touchpoint for the programme and attendee sign-ups.',
-      'The same domain now carries the 2027 edition, which is listed separately as upcoming.',
-    ],
-    verify: [
-      'Confirm the edition date for the completed MMA Hall event and add it to the card.',
-      'The card currently shows a section of the shared website, because that domain now serves the 2027 edition. An approved photo from the MMA Hall event would be a stronger visual — request one.',
-      'The screenshot shows the summit speaker. Confirm B2 Consultants are happy for it to appear in the Digital Dude portfolio.',
-    ],
-  },
-  {
-    id: 'visible-with-ambika',
-    name: 'Visible with Ambika',
-    summary: 'A Chennai programme with its event website and public announcement page delivered online.',
-    status: 'completed',
-    dateLabel: '30 August 2026',
-    city: 'Chennai',
-    scope: ['Event website', 'Landing page'],
-    url: 'https://visiblewithambika.com/',
-    linkLabel: 'Visit event website',
-    accent: '#FB923C',
-    monogram: 'VWA',
-    image: '/events/visible-with-ambika.webp',
-    detail: [
-      'The event ran in Chennai on 30 August 2026 on its own dedicated domain.',
-      'The site carried the event identity and its public-facing detail for attendees.',
-    ],
-    verify: [
-      'Write the one-line event description with the organiser and confirm the exact scope Digital Dude delivered before publishing.',
-      'The live site carries "Get your ticket", "Pricing" and "Venue" sections, so ticketing may belong in the scope chips. Confirm with the organiser, then add the chips if it does.',
-      'The screenshot shows the client in her own site\'s hero image. Confirm she is happy for that screenshot to appear in the Digital Dude portfolio.',
-    ],
-  },
-  {
-    id: 'timeless-bonds',
-    name: 'Timeless Bonds Reunion',
-    summary:
-      'An alumni reunion for GRD SCIB in Coimbatore, with a scheduled event page and an online attendee registration journey.',
-    status: 'completed',
-    dateLabel: '4 January 2025',
-    city: 'Coimbatore',
-    venue: 'GRD SCIB, Coimbatore',
-    organiser: 'GRD SCIB',
-    scope: ['Event website', 'Registration flow', 'Platform hosting'],
-    url: 'https://timelessbonds.eventsinfinite.com/',
-    linkLabel: 'View event page',
-    accent: '#F472B6',
-    monogram: 'TB',
-    image: '/events/timeless-bonds.webp',
-    detail: [
-      'An alumni reunion hosted by GRD SCIB in Coimbatore on 4 January 2025.',
-      'The event page published a timed schedule across three locations — a meet and greet and campus visit at GRD SCIB, then a get-together lunch at a restaurant in Coimbatore.',
-      'Attendees signed up through an online registration journey linked from the event page, with named course contacts listed for queries.',
-      'Delivered on the Events Infinite platform as a hosted event page.',
-    ],
-    verify: [
-      'Registration ran through a linked sign-up journey rather than on-page ticketing. Keep the scope chips limited to what was actually built.',
-      'Request approved reunion photos to replace the generated visual.',
     ],
   },
 ];

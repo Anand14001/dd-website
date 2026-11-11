@@ -42,10 +42,11 @@ export const EventProcess: React.FC = () => (
               transition={{ duration: 0.45, delay: i * 0.08 }}
               className="group relative overflow-hidden rounded-2xl border border-white/10 bg-ink p-6 transition-colors hover:border-lime/25 lg:p-7"
             >
-              {/* Oversized step numeral, bled into the top-right corner. */}
+              {/* Oversized step numeral. Kept fully inside the padded box: the card
+                  clips its overflow, so a bled numeral loses its top edge. */}
               <span
                 aria-hidden
-                className="pointer-events-none absolute -right-1 -top-4 select-none text-[5rem] font-bold leading-none tracking-tighter text-white/[0.04] transition-colors duration-300 group-hover:text-lime/[0.09]"
+                className="pointer-events-none absolute right-5 top-4 select-none text-[3.5rem] font-bold leading-none tracking-tighter text-white/[0.07] transition-colors duration-300 group-hover:text-lime/[0.14] lg:right-6 lg:top-5 lg:text-[4rem]"
               >
                 {step.step}
               </span>

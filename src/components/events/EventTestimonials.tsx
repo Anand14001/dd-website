@@ -204,7 +204,7 @@ export const EventTestimonials: React.FC = () => {
               </motion.figure>
             ))}
 
-            {/* What a serious organiser actually wants: to talk to a past client. */}
+            {/* The step after the proof: an invitation to talk about their own event. */}
             <motion.div
               initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -218,12 +218,12 @@ export const EventTestimonials: React.FC = () => {
                 </span>
 
                 <h3 className="mt-6 text-xl font-bold leading-snug tracking-tight text-white lg:text-2xl">
-                  Want to speak to an organiser we have worked with?
+                  Want to know how we can support your event?
                 </h3>
 
                 <p className="mt-4 text-sm leading-[1.75] text-white/60">
-                  We will put you in touch with a past client directly, and walk you
-                  through exactly what we built for their event. Every project on this
+                  Tell us the event, the dates and what you need handled, and we will
+                  walk you through exactly how we would support it. Every project on this
                   page has a live link you can open and check for yourself first.
                 </p>
               </div>
@@ -233,7 +233,7 @@ export const EventTestimonials: React.FC = () => {
                 className="group mt-8 inline-flex items-center justify-center gap-2 rounded-full border border-lime/30 bg-lime/10 px-6 py-3.5 text-sm font-bold text-lime transition-colors hover:bg-lime hover:text-ink focus:outline-none focus-visible:ring-2 focus-visible:ring-lime focus-visible:ring-offset-2 focus-visible:ring-offset-ink"
               >
                 <PhoneCall className="h-4 w-4" />
-                Request a reference call
+                Talk to us about your event
               </a>
             </motion.div>
           </div>

@@ -22,6 +22,12 @@ const ScrollManager: React.FC = () => {
   return null;
 };
 
+/**
+ * Temporarily hides the floating Digital Dude assistant across the site.
+ * The widget and its code are intact - flip this back to `true` to bring it back.
+ */
+const SHOW_ASSISTANT_WIDGET = false;
+
 export const Layout: React.FC = () => {
   const location = useLocation();
   const isDedicatedAssistantPage = location.pathname === '/assistant';
@@ -34,7 +40,7 @@ export const Layout: React.FC = () => {
         <Outlet />
       </main>
       <Footer />
-      {!isDedicatedAssistantPage && <DigitalDudeAssistantWidget />}
+      {SHOW_ASSISTANT_WIDGET && !isDedicatedAssistantPage && <DigitalDudeAssistantWidget />}
     </div>
   );
 };
