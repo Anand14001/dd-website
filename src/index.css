@@ -1,0 +1,173 @@
+@import "tailwindcss";
+
+/* ── Fonts ───────────────────────────────────────────────────────────────
+   Headings: Satoshi (free Fontshare face, close match to Area Normal)
+   Body:     Reddit Sans (Google Fonts)
+   Both are loaded via <link> tags in index.html.
+   ──────────────────────────────────────────────────────────────────────── */
+
+@theme {
+  /* Colour system — exact values from the reference build */
+  --color-navy:          #1c1d2c;
+  --color-navy-light:    #2a2b3a;
+  --color-navy-lighter:  #3e3e4e;
+  --color-navy-lightest: #474747;
+  --color-cream:         #f7f7f0;
+  --color-yellow:        #eaff01;
+  --color-lime:          #adf454;
+  --color-cyan:          #51dbea;
+  --color-silver:        #bbbbbb;
+
+  /* Type families */
+  --font-heading: "Satoshi", "Area Normal", sans-serif;
+  --font-body:    "Reddit Sans", sans-serif;
+
+  /* Radii */
+  --radius-20: 20px;
+  --radius-30: 30px;
+  --radius-40: 40px;
+  --radius-80: 80px;
+
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ── Fluid heading scale (exact clamps from the reference build) ───────── */
+@utility text-fluid-h1 {
+  font-size: clamp(3.5rem, 2.4785714rem + 4.1904762vw, 6.25rem);
+  letter-spacing: -0.04em;
+  line-height: 1.2;
+}
+@utility text-fluid-h2 {
+  font-size: clamp(2.75rem, 0.1785714rem + 5.3571429vw, 5rem);
+  letter-spacing: -0.04em;
+  line-height: 1.2;
+}
+@utility text-fluid-h3 {
+  font-size: clamp(2.5rem, 0.7857143rem + 3.5714286vw, 4rem);
+  letter-spacing: -0.04em;
+  line-height: 1.2;
+}
+@utility text-fluid-h4 {
+  font-size: clamp(2.125rem, 1.125rem + 2.0833333vw, 3rem);
+  letter-spacing: -0.04em;
+  line-height: 1.2;
+}
+@utility text-fluid-h5 {
+  font-size: clamp(1.625rem, 0.9107143rem + 1.4880952vw, 2.25rem);
+  letter-spacing: -0.04em;
+  line-height: 1.2;
+}
+@utility text-fluid-h6 {
+  font-size: clamp(1.3125rem, 0.8125rem + 1.0416667vw, 1.75rem);
+  letter-spacing: -0.04em;
+  line-height: 1.2;
+}
+
+/* ── Base ──────────────────────────────────────────────────────────────── */
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    /* `clip` rather than `hidden`: `hidden` makes <html> a scroll container,
+       which breaks Lenis. Both prevent sideways scrolling. */
+    overflow-x: clip;
+  }
+
+  /* Lenis owns scrolling; native smooth scrolling would fight it. */
+  html.lenis,
+  html.lenis body {
+    height: auto;
+  }
+  .lenis.lenis-smooth {
+    scroll-behavior: auto !important;
+  }
+  .lenis.lenis-smooth [data-lenis-prevent] {
+    overscroll-behavior: contain;
+  }
+  .lenis.lenis-stopped {
+    overflow: hidden;
+  }
+
+  /* With Lenis disabled (reduced motion), keep native smooth anchors. */
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+  body {
+    background-color: var(--color-navy);
+    color: #fff;
+    font-family: var(--font-body);
+    font-size: 1.0625rem;
+    line-height: 1.6;
+  }
+  ::selection {
+    background: var(--color-yellow);
+    color: var(--color-navy);
+  }
+}
+
+/* ── Animations ────────────────────────────────────────────────────────── */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-100%); }
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: none; }
+}
+/* Drives the process carousel: the bar's completion advances the step, so the
+   timer and the progress indicator can never drift apart. */
+@keyframes grow {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+@keyframes floaty {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-9px); }
+}
+
+@layer components {
+  /* ── Scroll reveal ──────────────────────────────────────────────────
+     One transition, several entry directions. `will-change` is only set
+     while hidden so we don't keep thousands of promoted layers alive.
+     ─────────────────────────────────────────────────────────────────── */
+  .reveal {
+    opacity: 0;
+    will-change: opacity, transform;
+    transition:
+      opacity 0.8s var(--ease-out-soft),
+      transform 0.8s var(--ease-out-soft);
+  }
+  .reveal-up     { transform: translate3d(0, 30px, 0); }
+  .reveal-down   { transform: translate3d(0, -24px, 0); }
+  .reveal-left   { transform: translate3d(-36px, 0, 0); }
+  .reveal-right  { transform: translate3d(36px, 0, 0); }
+  .reveal-scale  { transform: scale(0.94); }
+  .reveal-blur   { transform: translate3d(0, 20px, 0); filter: blur(8px); }
+  .reveal-fade   { transform: none; }
+
+  .reveal.is-visible {
+    opacity: 1;
+    transform: none;
+    filter: none;
+    will-change: auto;
+  }
+
+  /* The gradient applied to the first word of the hero headline */
+  .grad-word {
+    background: linear-gradient(90deg, #9ae87a 0%, #51dbea 48%, #8fa8f0 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* Floating team tags in the hero */
+  .float-tag {
+    animation: floaty 6s var(--ease-out-soft) infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { opacity: 1; transform: none; transition: none; }
+    .float-tag, [class*="animate-"] { animation: none !important; }
+  }
+}
